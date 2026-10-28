@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import { Entete } from '../components/Entete';
-import { IconePlus, IconeSeances } from '../components/Icones';
+import { IconeGuide, IconePlus, IconeSeances } from '../components/Icones';
 import { creerSeance, nomSeance, useSeances } from '../db/seances';
 import { JOURS_COURTS, jourSemaine } from '../lib/format';
 import { libelleMuscle } from '../data/muscles';
@@ -24,7 +24,10 @@ export function Seances() {
         <div className="carte vide">
           <IconeSeances taille={30} />
           <h3>Aucune séance pour l’instant</h3>
-          <p>Crée ta première séance : choisis les jours, les muscles, puis les exercices. Le guide te proposera des compléments.</p>
+          <p>
+            Génère un programme complet en indiquant ton nombre de jours, ou crée tes séances une par une. Le guide
+            te proposera des compléments.
+          </p>
         </div>
       )}
 
@@ -52,7 +55,11 @@ export function Seances() {
         ))}
       </ul>
 
-      <div className="actions-bas">
+      <div className="actions-bas actions-bas-deux">
+        <button type="button" className="bouton large" onClick={() => naviguer('/seances/generer')}>
+          <IconeGuide taille={20} />
+          Générer un programme
+        </button>
         <button type="button" className="bouton principal large" onClick={() => void nouvelle()}>
           <IconePlus taille={22} />
           Nouvelle séance

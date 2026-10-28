@@ -10,6 +10,129 @@
   background: linear-gradient(to bottom, transparent, var(--fond) 34%);
 }
 
+.actions-bas-deux {
+  display: grid;
+  gap: 10px;
+}
+
+/* ---------- Générateur de programme ---------- */
+.nombres-jours {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 8px;
+}
+
+.nombre-jour {
+  min-height: 60px;
+  border-radius: 18px;
+  border: 1px solid var(--trait);
+  background: var(--surface);
+  font-size: 30px;
+  font-weight: 700;
+  cursor: pointer;
+  transition:
+    background-color 0.2s ease,
+    transform 0.12s var(--ease);
+}
+
+.nombre-jour:active {
+  transform: scale(0.94);
+}
+
+.nombre-jour[aria-checked='true'] {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--sur-accent);
+}
+
+.repartitions {
+  display: grid;
+  gap: 10px;
+}
+
+.repartition {
+  display: grid;
+  gap: 4px;
+  padding: 14px 16px;
+  text-align: left;
+  cursor: pointer;
+  transition: border-color 0.2s ease;
+}
+
+.repartition[aria-checked='true'] {
+  border: 2px solid var(--accent);
+  padding: 13px 15px;
+}
+
+.repartition-nom {
+  font-weight: 700;
+  font-size: 17px;
+}
+
+.repartition-texte {
+  color: var(--texte-2);
+  font-size: 14px;
+  line-height: 1.35;
+}
+
+.note-alerte {
+  color: var(--danger);
+}
+
+.apercu-programme {
+  display: grid;
+  gap: 10px;
+}
+
+.apercu-seance {
+  padding: 14px 14px 8px;
+}
+
+.apercu-seance-tete {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 6px;
+}
+
+.apercu-seance-tete h3 {
+  margin: 0;
+  font-family: var(--police-titre);
+  font-size: 24px;
+  font-weight: 700;
+}
+
+.apercu-seance-tete .etiquette {
+  text-transform: capitalize;
+}
+
+.apercu-seance ol {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.apercu-seance li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 52px;
+  border-top: 1px solid var(--trait);
+}
+
+.apercu-nom {
+  flex: 1;
+  min-width: 0;
+  font-size: 15px;
+  line-height: 1.25;
+}
+
+.apercu-series {
+  color: var(--texte-2);
+  white-space: nowrap;
+  font-size: 16px;
+}
+
 /* ---------- Liste des séances ---------- */
 .liste-seances {
   list-style: none;

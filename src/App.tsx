@@ -11,6 +11,7 @@ import { ResumeSeance } from './screens/ResumeSeance';
 import { SeanceEnCours } from './screens/SeanceEnCours';
 import { Aujourdhui } from './screens/Aujourdhui';
 import { EditeurSeance } from './screens/EditeurSeance';
+import { GenerateurProgramme } from './screens/GenerateurProgramme';
 import { Exercices } from './screens/Exercices';
 import { FicheExercice } from './screens/FicheExercice';
 import { Progres } from './screens/Progres';
@@ -53,6 +54,7 @@ function Ecran() {
       <Routes>
         <Route path="/" element={<Aujourdhui />} />
         <Route path="/seances" element={<Seances />} />
+        <Route path="/seances/generer" element={<GenerateurProgramme />} />
         <Route path="/seances/:id" element={<EditeurSeance />} />
         <Route path="/seances/:id/ajouter" element={<AjoutExercice />} />
         <Route path="/exercices" element={<Exercices />} />
