@@ -55,7 +55,21 @@ function ex<M extends MuscleId>(
     positionCharge,
     consignes,
     reference: REFERENCES.has(id),
+    mesure: STATIQUES.has(id) ? 'secondes' : 'reps',
   };
+}
+
+/** Exercices statiques : on compte des secondes de maintien, pas des répétitions. */
+const STATIQUES: ReadonlySet<string> = new Set(['gainage', 'gainage-lateral']);
+
+/** Vrai si l'exercice se compte en secondes (gainage…). */
+export function enSecondes(id: string): boolean {
+  return STATIQUES.has(id);
+}
+
+/** Unité courte des "reps" d'un exercice : "reps" ou "s". */
+export function uniteReps(id: string): string {
+  return enSecondes(id) ? 's' : 'reps';
 }
 
 /**

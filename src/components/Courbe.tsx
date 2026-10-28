@@ -60,7 +60,9 @@ export function Courbe({ points, unite, titre, format = formatNombre }: Props) {
     points.forEach((p, i) => {
       if (Math.abs(px(p.x) - x) < Math.abs(px(points[meilleur]!.x) - x)) meilleur = i;
     });
-    setActif(meilleur);
+    // Au doigt : toucher à nouveau le même point referme la bulle.
+    if (e.type === 'pointerdown' && e.pointerType !== 'mouse' && meilleur === actif) setActif(null);
+    else setActif(meilleur);
   }
 
   const pointActif = actif !== null ? points[actif] : undefined;

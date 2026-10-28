@@ -92,11 +92,12 @@ export async function creerProgramme(
 export async function ajouterExercice(seance: Seance, exerciceId: string, reglages: Reglages): Promise<void> {
   const e = exerciceParId(exerciceId);
   const poly = e?.mouvement.articulation === 'polyarticulaire';
+  const secondes = e?.mesure === 'secondes';
   const nouveau: ExerciceDeSeance = {
     exerciceId,
     series: 3,
-    repsMin: poly ? 8 : 10,
-    repsMax: poly ? 10 : 12,
+    repsMin: secondes ? 30 : poly ? 8 : 10,
+    repsMax: secondes ? 45 : poly ? 10 : 12,
     charge: await derniereCharge(exerciceId),
     repos: reglages.reposParDefaut,
     supersetAvecSuivant: false,

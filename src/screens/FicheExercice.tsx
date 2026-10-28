@@ -169,7 +169,7 @@ function Fiche({ exercice: e }: { exercice: Exercice }) {
             {historique.map((h) => (
               <li key={h.entrainementId} className="ligne">
                 <div className="libelle">
-                  <span className="chiffres historique-perf">{resumerSeries(h.series)}</span>
+                  <span className="chiffres historique-perf">{resumerSeries(h.series, e.mesure === 'secondes')}</span>
                   <small>
                     {new Date(h.date).toLocaleDateString('fr-FR', {
                       weekday: 'short',

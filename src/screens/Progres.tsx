@@ -6,7 +6,7 @@ import { CHAMPS_MESURE, FeuilleMesure } from '../components/FeuilleMesure';
 import { IconeChevron, IconePlus, IconeProgres } from '../components/Icones';
 import { useMessage } from '../components/Message';
 import { SilhouetteMuscles } from '../components/SilhouetteMuscles';
-import { exerciceParId } from '../data/exercices';
+import { exerciceParId, uniteReps } from '../data/exercices';
 import { MUSCLES } from '../data/muscles';
 import { useEntrainementsTermines, useMesures } from '../db/progres';
 import type { Mesure } from '../db/types';
@@ -74,7 +74,10 @@ export function Progres() {
               <li key={m.id}>
                 <span className="barre-nom">{m.libelle}</span>
                 <span className="barre-piste">
-                  <span className="barre-valeur" style={{ width: `${(m.n / maxMuscle) * 100}%` }} />
+                  <span
+                    className="barre-valeur"
+                    style={{ width: `${(m.n / maxMuscle) * 100}%`, background: `var(--vol-${niveau(m.n)})` }}
+                  />
                 </span>
                 <span className="barre-nombre chiffres">{formatNombre(m.n)}</span>
               </li>
@@ -148,7 +151,7 @@ export function Progres() {
                       <small>
                         {r.meilleure.charge > 0
                           ? `${formatNombre(r.meilleure.charge)} kg × ${r.meilleure.reps}${r.unRm > 0 ? ` · 1RM ≈ ${formatNombre(Math.round(r.unRm))} kg` : ''}`
-                          : `${r.meilleure.reps} reps`}
+                          : `${r.meilleure.reps} ${uniteReps(r.exerciceId)}`}
                       </small>
                     </div>
                     <IconeChevron taille={20} />
@@ -189,6 +192,12 @@ export function Progres() {
       />
     </>
   );
+}
+
+/** Palier de la carte du corps (1 = léger, 3 = fort), pour colorer les barres de la même façon. */
+function niveau(n: number): 1 | 2 | 3 {
+  const p = PALIERS.find((x) => n >= x.min);
+  return p?.intensite === 'fort' ? 3 : p?.intensite === 'moyen' ? 2 : 1;
 }
 
 function Tuile({ valeur, unite, libelle }: { valeur: number | string; unite?: string; libelle: string }) {

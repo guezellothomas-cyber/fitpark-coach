@@ -19,6 +19,8 @@ export function ProgressionExercice() {
   const points = progressionExercice(entrainements, id);
   const record = recordsParExercice(entrainements).find((r) => r.exerciceId === id);
   const auPoidsDuCorps = points.every((p) => p.chargeMax === 0);
+  const secondes = exercice?.mesure === 'secondes';
+  const unite = secondes ? 's' : 'reps';
 
   return (
     <>
@@ -36,7 +38,7 @@ export function ProgressionExercice() {
               <div className="carte stat">
                 <span className="stat-valeur chiffres">
                   {auPoidsDuCorps ? record.meilleure.reps : formatNombre(record.meilleure.charge)}
-                  <small>{auPoidsDuCorps ? ' reps' : ` kg × ${record.meilleure.reps}`}</small>
+                  <small>{auPoidsDuCorps ? ` ${unite}` : ` kg × ${record.meilleure.reps}`}</small>
                 </span>
                 <span className="stat-libelle">Meilleure série</span>
               </div>
@@ -64,7 +66,7 @@ export function ProgressionExercice() {
           )}
 
           <section className="section">
-            <h2>{auPoidsDuCorps ? 'Répétitions totales' : 'Volume (charge × reps)'}</h2>
+            <h2>{auPoidsDuCorps ? (secondes ? 'Temps total' : 'Répétitions totales') : 'Volume (charge × reps)'}</h2>
             <div className="carte bloc-courbe">
               {points.length > 1 ? (
                 <Courbe
@@ -72,7 +74,7 @@ export function ProgressionExercice() {
                     x: p.date,
                     y: auPoidsDuCorps ? p.series.reduce((t, s) => t + s.reps, 0) : Math.round(p.volume),
                   }))}
-                  unite={auPoidsDuCorps ? 'reps' : 'kg'}
+                  unite={auPoidsDuCorps ? unite : 'kg'}
                   titre="Volume par séance"
                 />
               ) : (
@@ -87,7 +89,7 @@ export function ProgressionExercice() {
               {[...points].reverse().map((p) => (
                 <li key={p.date} className="ligne">
                   <div className="libelle">
-                    <span className="chiffres historique-perf">{resumerSeries(p.series)}</span>
+                    <span className="chiffres historique-perf">{resumerSeries(p.series, secondes)}</span>
                     <small>
                       {new Date(p.date).toLocaleDateString('fr-FR', { weekday: 'short', day: 'numeric', month: 'short' })}
                       {p.unRm > 0 && ` · 1RM ≈ ${formatNombre(Math.round(p.unRm))} kg`}

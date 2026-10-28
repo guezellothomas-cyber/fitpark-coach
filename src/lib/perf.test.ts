@@ -21,6 +21,11 @@ describe('resumerSeries', () => {
     expect(resumerSeries([{ charge: 0, reps: 12 }, { charge: 0, reps: 10 }])).toBe('12, 10 reps');
   });
 
+  it('affiche des secondes pour le gainage', () => {
+    expect(resumerSeries([{ charge: 0, reps: 45 }, { charge: 0, reps: 40 }], true)).toBe('45, 40 s');
+    expect(resumerSeries([{ charge: 10, reps: 30 }], true)).toBe('10 kg × 30 s');
+  });
+
   it('renvoie une chaîne vide sans série', () => {
     expect(resumerSeries([])).toBe('');
   });

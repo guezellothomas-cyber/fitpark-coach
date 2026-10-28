@@ -198,6 +198,7 @@ const LIBRE: ReadonlySet<TypeExercice> = new Set(['libre', 'poids-du-corps']);
 
 /** Réglages par défaut : 1er polyarticulaire lourd, autres poly, isolation, abdos. */
 function parametres(e: ExerciceCatalogue, premier: boolean): Omit<ExerciceDeSeance, 'exerciceId' | 'charge' | 'supersetAvecSuivant'> {
+  if (e.mesure === 'secondes') return { series: 3, repsMin: 30, repsMax: 45, repos: 60 };
   if (e.musclePrincipal === 'abdos') return { series: 3, repsMin: 12, repsMax: 15, repos: 60 };
   if (e.mouvement.articulation === 'polyarticulaire') {
     return premier ? { series: 4, repsMin: 6, repsMax: 8, repos: 150 } : { series: 3, repsMin: 8, repsMax: 10, repos: 120 };

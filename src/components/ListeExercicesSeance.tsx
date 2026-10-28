@@ -16,7 +16,8 @@ import {
   verticalListSortingStrategy,
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import { exerciceParId } from '../data/exercices';
+import { enSecondes, exerciceParId } from '../data/exercices';
+import { resumerObjectif } from '../lib/perf';
 import type { ExerciceDeSeance } from '../db/types';
 import { formatDuree, formatNombre } from '../lib/format';
 import { IconeLien, IconePoignee } from './Icones';
@@ -29,9 +30,8 @@ interface Props {
 
 /** "3 × 8-10 · 60 kg · 1:30" */
 function resume(e: ExerciceDeSeance): string {
-  const reps = e.repsMin === e.repsMax ? `${e.repsMin}` : `${e.repsMin}-${e.repsMax}`;
   const charge = e.charge > 0 ? ` · ${formatNombre(e.charge)} kg` : '';
-  return `${e.series} × ${reps}${charge} · repos ${formatDuree(e.repos)}`;
+  return `${resumerObjectif(e.series, e.repsMin, e.repsMax, enSecondes(e.exerciceId))}${charge} · repos ${formatDuree(e.repos)}`;
 }
 
 /**

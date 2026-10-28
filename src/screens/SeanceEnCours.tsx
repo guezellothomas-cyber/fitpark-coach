@@ -16,7 +16,7 @@ import {
 } from '../components/Icones';
 import { useMessage } from '../components/Message';
 import { Reglette } from '../components/Reglette';
-import { exerciceParId } from '../data/exercices';
+import { enSecondes, exerciceParId } from '../data/exercices';
 import {
   abandonner,
   ajusterRepos,
@@ -69,6 +69,7 @@ function Deroulement({ e, plan }: { e: Entrainement; plan: ExerciceDeSeance[] })
   const item = plan[index]!;
   const exercice = exerciceParId(item.exerciceId);
   const faites = seriesDe(e.series, item.exerciceId);
+  const secondes = exercice?.mesure === 'secondes';
   const numero = faites.length + 1;
   const derniereFois = useDerniereFois(item.exerciceId, e.id);
   const toutFini = plan.every((_, i) => restantes(plan, e.series, i) === 0);
@@ -196,13 +197,14 @@ function Deroulement({ e, plan }: { e: Entrainement; plan: ExerciceDeSeance[] })
               Série <strong className="chiffres">{numero}</strong> sur {item.series}
             </>
           )}{' '}
-          · objectif {item.repsMin === item.repsMax ? item.repsMin : `${item.repsMin}-${item.repsMax}`} reps
+          · objectif {item.repsMin === item.repsMax ? item.repsMin : `${item.repsMin}-${item.repsMax}`}{' '}
+          {secondes ? 's' : 'reps'}
         </p>
         <p className="seance-derniere">
           {derniereFois === undefined
             ? ' '
             : derniereFois.length
-              ? `La dernière fois : ${resumerSeries(derniereFois)}`
+              ? `La dernière fois : ${resumerSeries(derniereFois, secondes)}`
               : 'Première fois sur cet exercice'}
         </p>
 
@@ -217,7 +219,9 @@ function Deroulement({ e, plan }: { e: Entrainement; plan: ExerciceDeSeance[] })
                 >
                   <IconeCoche taille={16} strokeWidth={3} />
                   <span className="chiffres">
-                    {s.charge > 0 ? `${formatNombre(s.charge)} × ${s.reps}` : `${s.reps} reps`}
+                    {s.charge > 0
+                      ? `${formatNombre(s.charge)} × ${s.reps}${secondes ? ' s' : ''}`
+                      : `${s.reps} ${secondes ? 's' : 'reps'}`}
                   </span>
                 </button>
               </li>
@@ -232,6 +236,8 @@ function Deroulement({ e, plan }: { e: Entrainement; plan: ExerciceDeSeance[] })
           item={item}
           proposition={proposer(item, faites, derniereFois)}
           pas={reglages.pasCharge}
+          secondes={secondes}
+          poidsDuCorps={exercice?.type === 'poids-du-corps'}
           surcharge={surcharge}
           echauffementPossible={faites.length === 0}
           onRemplacer={() => setFeuilleRemplacer(true)}
@@ -343,6 +349,10 @@ interface PropsSaisie {
   item: ExerciceDeSeance;
   proposition: { charge: number; reps: number };
   pas: number;
+  /** Exercice compté en secondes (gainage) plutôt qu'en répétitions. */
+  secondes: boolean;
+  /** Exercice au poids du corps : la charge est un lest facultatif. */
+  poidsDuCorps: boolean;
   surcharge: Surcharge | null;
   echauffementPossible: boolean;
   libelleValider: string;
@@ -361,6 +371,8 @@ interface PropsSaisie {
 function Saisie({
   proposition,
   pas,
+  secondes,
+  poidsDuCorps,
   surcharge,
   echauffementPossible,
   libelleValider,
@@ -429,12 +441,21 @@ function Saisie({
 
       <section className="seance-saisie">
         <div className="saisie-ligne">
-          <span className="saisie-libelle">Charge</span>
+          <span className="saisie-libelle">{poidsDuCorps ? 'Lest (facultatif)' : 'Charge'}</span>
           <Reglette grande libelle="charge" valeur={charge} pas={pas} min={0} max={500} unite="kg" onChange={setCharge} />
         </div>
         <div className="saisie-ligne">
-          <span className="saisie-libelle">Reps</span>
-          <Reglette grande libelle="répétitions" valeur={reps} pas={1} min={0} max={100} onChange={setReps} />
+          <span className="saisie-libelle">{secondes ? 'Secondes' : 'Reps'}</span>
+          <Reglette
+            grande
+            libelle={secondes ? 'secondes' : 'répétitions'}
+            valeur={reps}
+            pas={secondes ? 5 : 1}
+            min={0}
+            max={secondes ? 600 : 100}
+            unite={secondes ? 's' : undefined}
+            onChange={setReps}
+          />
         </div>
       </section>
 
@@ -492,8 +513,15 @@ function EditionSerie({ serie, pas, onEnregistrer, onSupprimer }: { serie: Serie
           <Reglette libelle="charge" valeur={charge} pas={pas} min={0} max={500} unite="kg" onChange={setCharge} />
         </div>
         <div className="ligne-reglage">
-          <span>Reps</span>
-          <Reglette libelle="répétitions" valeur={reps} pas={1} min={0} max={100} onChange={setReps} />
+          <span>{enSecondes(serie.exerciceId) ? 'Secondes' : 'Reps'}</span>
+          <Reglette
+            libelle={enSecondes(serie.exerciceId) ? 'secondes' : 'répétitions'}
+            valeur={reps}
+            pas={enSecondes(serie.exerciceId) ? 5 : 1}
+            min={0}
+            max={600}
+            onChange={setReps}
+          />
         </div>
       </div>
       <div className="actions">

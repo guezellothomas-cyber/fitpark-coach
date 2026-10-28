@@ -8,7 +8,8 @@ export default defineConfig({
     ...minimal2023Preset,
     // Fond graphite plein sur les icônes "maskable" et Apple (iOS n'aime pas la transparence).
     maskable: { ...minimal2023Preset.maskable, resizeOptions: { background: '#0e0f0c' } },
-    apple: { ...minimal2023Preset.apple, resizeOptions: { background: '#0e0f0c' } },
+    // Pas de marge : le dessin a déjà son propre fond, l'iPhone arrondit lui-même les coins.
+    apple: { ...minimal2023Preset.apple, padding: 0, resizeOptions: { background: '#0e0f0c' } },
   },
   images: ['public/icon.svg'],
 });

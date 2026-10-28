@@ -53,6 +53,11 @@ export interface ExerciceCatalogue {
    * quand plusieurs exercices répondent aussi bien aux règles.
    */
   reference: boolean;
+  /**
+   * Ce qu'on compte à chaque série : des répétitions, ou des secondes de maintien
+   * (exercices statiques comme le gainage). Dans ce cas, le champ "reps" des séries contient des secondes.
+   */
+  mesure: 'reps' | 'secondes';
 }
 
 /** Un exercice avec mon réglage personnel "disponible dans ma salle". */

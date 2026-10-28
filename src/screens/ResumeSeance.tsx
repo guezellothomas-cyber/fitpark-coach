@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Entete } from '../components/Entete';
-import { exerciceParId } from '../data/exercices';
+import { enSecondes, exerciceParId } from '../data/exercices';
 import { seriesAvant, useEntrainement } from '../db/entrainement';
 import { formatNombre } from '../lib/format';
 import { resumerSeries } from '../lib/perf';
@@ -82,7 +82,10 @@ export function ResumeSeance() {
             <li key={id} className="ligne">
               <div className="libelle">
                 {exerciceParId(id)?.nom ?? id}
-                <small className="chiffres">{resumerSeries(travail.filter((s) => s.exerciceId === id))}</small>
+                <small className="chiffres">{resumerSeries(
+                    travail.filter((s) => s.exerciceId === id),
+                    enSecondes(id),
+                  )}</small>
               </div>
             </li>
           ))}

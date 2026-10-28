@@ -6,7 +6,8 @@ import { IconeGuide } from '../components/Icones';
 import { Interrupteur } from '../components/Interrupteur';
 import { useMessage } from '../components/Message';
 import { MiniatureExercice } from '../components/MiniatureExercice';
-import { exerciceParId } from '../data/exercices';
+import { enSecondes, exerciceParId } from '../data/exercices';
+import { resumerObjectif } from '../lib/perf';
 import { useExercices } from '../db/salle';
 import { creerProgramme, useSeances } from '../db/seances';
 import { JOURS_COURTS } from '../lib/format';
@@ -148,7 +149,7 @@ export function GenerateurProgramme() {
                     <MiniatureExercice exerciceId={e.exerciceId} />
                     <span className="apercu-nom">{exerciceParId(e.exerciceId)?.nom}</span>
                     <span className="chiffres apercu-series">
-                      {e.series} × {e.repsMin}-{e.repsMax}
+                      {resumerObjectif(e.series, e.repsMin, e.repsMax, enSecondes(e.exerciceId))}
                     </span>
                   </li>
                 ))}

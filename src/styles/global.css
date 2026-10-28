@@ -327,6 +327,7 @@ select {
   align-items: flex-start;
   gap: 10px;
   padding: 26px 22px;
+  margin-bottom: 22px;
 }
 
 .vide svg {

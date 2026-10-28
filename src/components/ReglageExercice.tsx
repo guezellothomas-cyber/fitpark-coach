@@ -18,6 +18,7 @@ interface Props {
 export function ReglageExercice({ item, onChange, onRetirer, onFermer }: Props) {
   const { pasCharge } = useReglages();
   const exercice = item ? exerciceParId(item.exerciceId) : undefined;
+  const secondes = exercice?.mesure === 'secondes';
 
   return (
     <Feuille ouverte={item !== null} onFermer={onFermer} titre={exercice?.nom ?? 'Exercice'}>
@@ -28,12 +29,14 @@ export function ReglageExercice({ item, onChange, onRetirer, onFermer }: Props) 
               <Reglette libelle="séries" valeur={item.series} pas={1} min={1} max={10}
                 onChange={(series) => onChange({ ...item, series })} />
             </LigneReglage>
-            <LigneReglage libelle="Reps mini">
-              <Reglette libelle="répétitions minimum" valeur={item.repsMin} pas={1} min={1} max={50}
+            <LigneReglage libelle={secondes ? 'Secondes mini' : 'Reps mini'}>
+              <Reglette libelle={secondes ? 'secondes minimum' : 'répétitions minimum'} valeur={item.repsMin}
+                pas={secondes ? 5 : 1} min={1} max={secondes ? 300 : 50} unite={secondes ? 's' : undefined}
                 onChange={(repsMin) => onChange({ ...item, repsMin, repsMax: Math.max(repsMin, item.repsMax) })} />
             </LigneReglage>
-            <LigneReglage libelle="Reps maxi">
-              <Reglette libelle="répétitions maximum" valeur={item.repsMax} pas={1} min={1} max={50}
+            <LigneReglage libelle={secondes ? 'Secondes maxi' : 'Reps maxi'}>
+              <Reglette libelle={secondes ? 'secondes maximum' : 'répétitions maximum'} valeur={item.repsMax}
+                pas={secondes ? 5 : 1} min={1} max={secondes ? 300 : 50} unite={secondes ? 's' : undefined}
                 onChange={(repsMax) => onChange({ ...item, repsMax, repsMin: Math.min(repsMax, item.repsMin) })} />
             </LigneReglage>
             <LigneReglage libelle="Charge de départ">
