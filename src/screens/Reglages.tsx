@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState, type ChangeEvent } from 'react';
 import { Entete } from '../components/Entete';
 import { Feuille } from '../components/Feuille';
-import { IconeExporter, IconeImporter } from '../components/Icones';
+import { Link } from 'react-router-dom';
+import { IconeChevron, IconeExporter, IconeImporter } from '../components/Icones';
 import { Interrupteur } from '../components/Interrupteur';
 import { useMessage } from '../components/Message';
 import { Reglette } from '../components/Reglette';
@@ -135,6 +136,43 @@ export function Reglages() {
               onChange={(son) => void majReglages({ son })}
             />
           </div>
+        </div>
+      </section>
+
+      <section className="section">
+        <h2>Minuteur iPhone</h2>
+        <div className="carte">
+          <div className="ligne">
+            <div className="libelle">
+              Minuteur iPhone (Dynamic Island)
+              <small>Chaque série validée lance le raccourci « Repos FitPark »</small>
+            </div>
+            <Interrupteur
+              libelle="Minuteur iPhone (Dynamic Island)"
+              actif={reglages.minuteurIphone}
+              onChange={(minuteurIphone) => void majReglages({ minuteurIphone })}
+            />
+          </div>
+          {reglages.minuteurIphone && (
+            <div className="ligne">
+              <div className="libelle">
+                Retour automatique
+                <small>Le raccourci rouvre FitPark (peut ouvrir Safari à la place)</small>
+              </div>
+              <Interrupteur
+                libelle="Retour automatique"
+                actif={reglages.retourAuto}
+                onChange={(retourAuto) => void majReglages({ retourAuto })}
+              />
+            </div>
+          )}
+          <Link to="/aide/raccourci" className="ligne ligne-lien">
+            <div className="libelle">
+              Créer le raccourci « Repos FitPark »
+              <small>Guide pas à pas, à faire une seule fois</small>
+            </div>
+            <IconeChevron taille={20} />
+          </Link>
         </div>
       </section>
 

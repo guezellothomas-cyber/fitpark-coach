@@ -1,0 +1,566 @@
+/* Mode séance en salle, chrono de repos, résumé, accueil, aide raccourci. */
+
+/* ---------- Accueil ---------- */
+.carte-du-jour {
+  display: grid;
+  gap: 10px;
+  justify-items: start;
+  padding: 20px 20px 22px;
+  margin-bottom: 14px;
+}
+
+.carte-du-jour h3 {
+  font-family: var(--police-titre);
+  font-size: 34px;
+  font-weight: 700;
+  line-height: 1;
+  margin: 2px 0 0;
+}
+
+.carte-du-jour p {
+  margin: 0;
+  color: var(--texte-2);
+}
+
+.carte-du-jour.en-cours {
+  border-color: var(--accent);
+}
+
+.apercu-exercices {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  counter-reset: exo;
+}
+
+.apercu-exercices li {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 7px 0;
+  border-top: 1px solid var(--trait);
+  font-size: 16px;
+}
+
+.apercu-exercices li span:last-child {
+  color: var(--texte-2);
+  font-size: 18px;
+  white-space: nowrap;
+}
+
+.bouton-lancer {
+  min-height: 68px;
+  font-size: 21px;
+}
+
+.ligne-lien {
+  color: inherit;
+  text-decoration: none;
+}
+
+.ligne-lien svg {
+  color: var(--texte-3);
+}
+
+/* ---------- Écran de séance ---------- */
+.seance {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  margin-bottom: -28px;
+}
+
+.seance-entete {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  margin: -6px 0 10px;
+}
+
+.seance-entete .bouton-retour {
+  justify-self: start;
+}
+
+.seance-entete .lien-action {
+  justify-self: end;
+}
+
+.seance-chrono {
+  display: grid;
+  justify-items: center;
+  line-height: 1.1;
+}
+
+.seance-chrono .seance-nom {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--texte-3);
+  max-width: 150px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.seance-chrono .chiffres {
+  font-size: 22px;
+  font-weight: 700;
+}
+
+.seance-progression {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 8px;
+}
+
+.pastille {
+  flex: 1;
+  height: 28px;
+  padding: 11px 0;
+  border: none;
+  background: none;
+  cursor: pointer;
+}
+
+.pastille span {
+  display: block;
+  height: 6px;
+  border-radius: 999px;
+  background: var(--accent);
+  box-shadow: 0 0 0 0 transparent;
+  transition: width 0.3s var(--ease);
+}
+
+/* Fond gris de chaque pastille (la partie remplie est le span) */
+.pastille {
+  background-image: linear-gradient(var(--surface-3), var(--surface-3));
+  background-size: 100% 6px;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-clip: content-box;
+  border-radius: 999px;
+}
+
+.pastille.courante {
+  background-image: linear-gradient(var(--texte-3), var(--texte-3));
+}
+
+.seance-exercice {
+  margin-bottom: 8px;
+}
+
+.seance-navigation {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 0 -12px;
+}
+
+.fleche {
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  border: none;
+  border-radius: 50%;
+  background: none;
+  color: var(--texte-2);
+  cursor: pointer;
+}
+
+.fleche:disabled {
+  opacity: 0.2;
+}
+
+.seance-position {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--texte-3);
+}
+
+.seance-titre {
+  font-family: var(--police-titre);
+  font-size: 40px;
+  font-weight: 700;
+  line-height: 1;
+  margin: 4px 0 8px;
+}
+
+.seance-superset {
+  margin: -2px 0 6px;
+  color: var(--accent-texte);
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.seance-objectif {
+  margin: 0;
+  font-size: 18px;
+  color: var(--texte-2);
+}
+
+.seance-objectif strong {
+  color: var(--texte);
+  font-size: 22px;
+}
+
+.seance-derniere {
+  margin: 4px 0 0;
+  font-size: 16px;
+  color: var(--accent-texte);
+  font-weight: 600;
+}
+
+.series-faites {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  list-style: none;
+  margin: 12px 0 0;
+  padding: 0;
+}
+
+.series-faites button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 40px;
+  padding: 0 14px 0 10px;
+  border: none;
+  border-radius: 999px;
+  background: var(--accent-doux);
+  color: var(--accent-texte);
+  font-size: 18px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+/* Saisie charge / reps */
+.seance-saisie {
+  display: grid;
+  gap: 6px;
+  margin: 6px 0 0;
+}
+
+.saisie-ligne {
+  display: grid;
+  gap: 2px;
+}
+
+.saisie-libelle {
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--texte-3);
+  text-align: center;
+}
+
+.reglette.grande {
+  grid-template-columns: 76px 1fr 76px;
+  gap: 10px;
+}
+
+.reglette.grande .reglette-bouton {
+  width: 76px;
+  height: 76px;
+  background: var(--surface-2);
+}
+
+.reglette.grande .reglette-valeur {
+  font-size: 64px;
+}
+
+/* Zone d'action en bas : bouton Valider ou chrono de repos */
+.seance-action {
+  position: sticky;
+  bottom: 0;
+  z-index: 5;
+  display: grid;
+  gap: 10px;
+  margin: auto -18px 0;
+  padding: 14px 18px calc(var(--bas-sur) + 14px);
+  background: linear-gradient(to bottom, transparent, var(--fond) 22px);
+}
+
+.bouton-valider {
+  width: 100%;
+  min-height: 78px;
+  font-size: 21px;
+  border-radius: 24px;
+}
+
+.seance-go {
+  margin: 0;
+  text-align: center;
+  font-family: var(--police-titre);
+  font-size: 26px;
+  font-weight: 700;
+  color: var(--accent-texte);
+}
+
+.seance-action.go {
+  animation: flash 0.9s ease-in-out 3;
+}
+
+@keyframes flash {
+  50% {
+    background: var(--accent-doux);
+  }
+}
+
+/* ---------- Chrono de repos ---------- */
+.chrono {
+  position: relative;
+  overflow: hidden;
+  display: grid;
+  /* minmax(0, 1fr) : le texte "Ensuite…" ne doit jamais élargir le chrono au-delà de l'écran */
+  grid-template-columns: minmax(0, 1fr);
+  gap: 8px;
+  padding: 16px 16px 14px;
+  border-radius: 24px;
+  background: var(--surface);
+  border: 1px solid var(--trait);
+  animation: monte-chrono 0.3s var(--ease);
+}
+
+@keyframes monte-chrono {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+}
+
+.chrono-barre {
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 4px;
+  width: 100%;
+  background: var(--accent);
+  transform-origin: left;
+  transform: scaleX(var(--p));
+  transition: transform 0.25s linear;
+}
+
+.chrono-ligne {
+  display: grid;
+  grid-template-columns: 64px 1fr 64px;
+  align-items: center;
+}
+
+.chrono-ajuster {
+  height: 64px;
+  border: none;
+  border-radius: 50%;
+  background: var(--surface-2);
+  font-weight: 700;
+  font-size: 17px;
+  cursor: pointer;
+}
+
+.chrono-ajuster:active {
+  background: var(--accent);
+  color: var(--sur-accent);
+}
+
+.chrono-centre {
+  display: grid;
+  justify-items: center;
+  line-height: 1;
+}
+
+.chrono-titre {
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--texte-3);
+}
+
+.chrono-temps {
+  font-size: 76px;
+  font-weight: 700;
+}
+
+.chrono.bientot .chrono-temps {
+  color: var(--accent-texte);
+}
+
+.chrono-bas {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.chrono-ensuite {
+  flex: 1;
+  min-width: 0;
+  font-size: 14px;
+  color: var(--texte-2);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ---------- Résumé ---------- */
+.stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 26px;
+}
+
+.stat {
+  display: grid;
+  gap: 2px;
+  padding: 16px;
+}
+
+.stat-valeur {
+  font-size: 38px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.stat-valeur small {
+  font-size: 0.5em;
+  color: var(--texte-2);
+}
+
+.stat-libelle {
+  font-size: 14px;
+  color: var(--texte-2);
+}
+
+.record .etiquette {
+  flex: none;
+}
+
+/* ---------- Aide raccourci ---------- */
+.aide-intro {
+  padding: 4px 18px;
+  margin-bottom: 18px;
+}
+
+.aide-intro p {
+  color: var(--texte-2);
+}
+
+.etapes-aide {
+  list-style: none;
+  margin: 0 0 26px;
+  padding: 0;
+  display: grid;
+  gap: 10px;
+}
+
+.etape-aide {
+  display: grid;
+  grid-template-columns: 36px 1fr;
+  gap: 12px;
+  padding: 16px 16px 14px;
+}
+
+.etape-aide h3 {
+  margin: 4px 0 6px;
+  font-size: 18px;
+  line-height: 1.25;
+}
+
+.etape-aide p {
+  margin: 0 0 8px;
+  color: var(--texte-2);
+}
+
+.etape-numero {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--accent);
+  color: var(--sur-accent);
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.aide-nom {
+  display: inline-block;
+  padding: 6px 12px;
+  border-radius: 10px;
+  background: var(--surface-2);
+  color: var(--texte) !important;
+  font-weight: 700;
+  font-size: 19px;
+}
+
+.note-petite {
+  font-size: 14px;
+}
+
+.aide-liste {
+  margin: 0;
+  padding-left: 18px;
+  color: var(--texte-2);
+  display: grid;
+  gap: 8px;
+}
+
+/* Maquette simplifiée des actions de l'app Raccourcis */
+.maquette {
+  display: grid;
+  justify-items: center;
+  gap: 4px;
+  margin: 10px 0 4px;
+  padding: 14px 10px;
+  border-radius: 14px;
+  background: var(--surface-2);
+}
+
+.maquette-bloc {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 12px;
+  border-radius: 12px;
+  background: var(--surface);
+  font-size: 15px;
+  line-height: 1.6;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
+}
+
+.maquette-icone {
+  flex: none;
+  width: 26px;
+  height: 26px;
+  border-radius: 7px;
+  background: #8e9387;
+}
+
+.maquette-bloc.orange .maquette-icone {
+  background: #f29a38;
+}
+
+.maquette-jeton {
+  display: inline-block;
+  padding: 0 7px;
+  border-radius: 6px;
+  background: rgba(70, 130, 255, 0.18);
+  color: #5a8dff;
+  font-weight: 600;
+}
+
+.maquette-fleche {
+  width: 2px;
+  height: 14px;
+  background: var(--texte-3);
+}

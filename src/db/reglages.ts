@@ -9,6 +9,7 @@ export const REGLAGES_DEFAUT: Reglages = {
   pasCharge: 2.5,
   reposParDefaut: 90,
   minuteurIphone: false,
+  retourAuto: false,
 };
 
 /** Lit les réglages et se met à jour tout seul quand ils changent. */

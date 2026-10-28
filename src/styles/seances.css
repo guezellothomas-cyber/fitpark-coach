@@ -185,6 +185,7 @@
 .lien-action.danger {
   color: var(--danger);
   min-height: var(--tactile);
+  justify-self: center;
 }
 
 .section.centre {

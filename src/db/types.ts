@@ -18,6 +18,8 @@ export interface Reglages {
   reposParDefaut: number;
   /** Lancer le raccourci iOS "Repos FitPark" (minuteur Horloge / Dynamic Island) à chaque série. */
   minuteurIphone: boolean;
+  /** Demander au raccourci de revenir automatiquement à l'app (paramètre x-success). */
+  retourAuto: boolean;
 }
 
 /** Disponibilité d'un exercice dans ma salle. Absent de la table = disponible. */
@@ -62,7 +64,7 @@ export interface SerieFaite {
   echauffement: boolean;
 }
 
-/** Une séance réellement effectuée (historique). */
+/** Une séance réellement effectuée (historique), ou en cours si `fin` est null. */
 export interface Entrainement {
   id: string;
   seanceId: string | null;
@@ -70,6 +72,17 @@ export interface Entrainement {
   debut: number;
   fin: number | null;
   series: SerieFaite[];
+  /** Copie du programme au lancement : modifier la séance type ensuite ne change pas celle-ci. */
+  plan?: ExerciceDeSeance[];
+  /** Exercice affiché (position dans le plan). */
+  indexCourant?: number;
+  /**
+   * Chrono de repos : horodatage de fin (et non un compte à rebours), pour rester juste
+   * même si l'app passe en arrière-plan ou est fermée. null = pas de repos en cours.
+   */
+  finRepos?: number | null;
+  /** Durée totale du repos en cours, en secondes (pour la barre de progression). */
+  dureeRepos?: number;
 }
 
 /** Poids de corps et mensurations à une date donnée (en kg et cm). */

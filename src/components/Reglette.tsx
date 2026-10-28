@@ -12,6 +12,8 @@ interface Props {
   /** Formatage personnalisé de la valeur (ex. durée 1:30). */
   formater?: (v: number) => string;
   libelle: string;
+  /** Version géante pour l'écran de séance (chiffres très lisibles, boutons plus gros). */
+  grande?: boolean;
 }
 
 /**
@@ -27,6 +29,7 @@ export function Reglette({
   unite,
   formater = formatNombre,
   libelle,
+  grande = false,
 }: Props) {
   // Arrondi pour éviter les erreurs de calcul du type 0,1 + 0,2 = 0,30000000000000004
   const arrondir = (v: number) => Math.round(v * 100) / 100;
@@ -39,7 +42,7 @@ export function Reglette({
   };
 
   return (
-    <div className="reglette" role="group" aria-label={libelle}>
+    <div className={`reglette${grande ? ' grande' : ''}`} role="group" aria-label={libelle}>
       <button
         type="button"
         className="reglette-bouton"
@@ -47,7 +50,7 @@ export function Reglette({
         disabled={valeur <= min}
         aria-label={`Diminuer ${libelle}`}
       >
-        <IconeMoins taille={22} />
+        <IconeMoins taille={grande ? 30 : 22} />
       </button>
       <output className="reglette-valeur chiffres" aria-live="polite">
         {formater(valeur)}
@@ -60,7 +63,7 @@ export function Reglette({
         disabled={valeur >= max}
         aria-label={`Augmenter ${libelle}`}
       >
-        <IconePlus taille={22} />
+        <IconePlus taille={grande ? 30 : 22} />
       </button>
     </div>
   );

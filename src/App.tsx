@@ -5,7 +5,10 @@ import { BarreOnglets } from './components/BarreOnglets';
 import { FournisseurMessage } from './components/Message';
 import { useReglages } from './db/reglages';
 import { useAppliquerTheme } from './lib/theme';
+import { AideRaccourci } from './screens/AideRaccourci';
 import { AjoutExercice } from './screens/AjoutExercice';
+import { ResumeSeance } from './screens/ResumeSeance';
+import { SeanceEnCours } from './screens/SeanceEnCours';
 import { Aujourdhui } from './screens/Aujourdhui';
 import { EditeurSeance } from './screens/EditeurSeance';
 import { Exercices } from './screens/Exercices';
@@ -55,9 +58,18 @@ function Ecran() {
         <Route path="/exercices/:id" element={<FicheExercice />} />
         <Route path="/progres" element={<Progres />} />
         <Route path="/reglages" element={<Reglages />} />
+        <Route path="/aide/raccourci" element={<AideRaccourci />} />
+        <Route path="/seance" element={<SeanceEnCours />} />
+        <Route path="/seance/resume/:id" element={<ResumeSeance />} />
       </Routes>
     </main>
   );
+}
+
+/** Pendant une séance en salle, la barre d'onglets est masquée : tout l'écran sert à la saisie. */
+function BarreOngletsHorsSeance() {
+  const { pathname } = useLocation();
+  return pathname === '/seance' ? null : <BarreOnglets />;
 }
 
 export function App() {
@@ -74,7 +86,7 @@ export function App() {
           <div className="cache-haut" aria-hidden="true" />
           <BandeauMiseAJour />
           <Ecran />
-          <BarreOnglets />
+          <BarreOngletsHorsSeance />
         </div>
       </FournisseurMessage>
     </HashRouter>
