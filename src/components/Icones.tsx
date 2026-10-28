@@ -113,6 +113,47 @@ export function IconeImporter(p: Props) {
   );
 }
 
+export function IconeRecherche(p: Props) {
+  return (
+    <Svg {...p}>
+      <circle cx="11" cy="11" r="6.5" />
+      <path d="m16 16 4.5 4.5" />
+    </Svg>
+  );
+}
+
+export function IconeCroix(p: Props) {
+  return (
+    <Svg {...p}>
+      <path d="M6 6l12 12M18 6 6 18" />
+    </Svg>
+  );
+}
+
+export function IconeCoche(p: Props) {
+  return (
+    <Svg {...p}>
+      <path d="m5 12.5 4.5 4.5L19 7.5" />
+    </Svg>
+  );
+}
+
+export function IconeRetour(p: Props) {
+  return (
+    <Svg {...p}>
+      <path d="M15 5 8 12l7 7" />
+    </Svg>
+  );
+}
+
+export function IconeChevron(p: Props) {
+  return (
+    <Svg {...p}>
+      <path d="m9 5 7 7-7 7" />
+    </Svg>
+  );
+}
+
 export function IconeChantier(p: Props) {
   return (
     <Svg {...p}>

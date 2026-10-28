@@ -1,0 +1,172 @@
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
+import { Entete } from '../components/Entete';
+import { IconeRetour } from '../components/Icones';
+import { Interrupteur } from '../components/Interrupteur';
+import { libelleMuscle, libelleZone } from '../data/muscles';
+import { libelleType, type Exercice } from '../data/types';
+import { useHistoriqueExercice } from '../db/historique';
+import { definirDisponible, useExercices } from '../db/salle';
+import { resumerSeries } from '../lib/perf';
+
+const TEXTE_CHARGE = {
+  etirement: {
+    titre: 'Chargé en étirement',
+    texte: 'Le plus dur quand le muscle est allongé, en bas du mouvement.',
+  },
+  contraction: {
+    titre: 'Chargé en contraction',
+    texte: 'Le plus dur quand le muscle est contracté, en fin de mouvement.',
+  },
+} as const;
+
+const TEXTE_ARTICULATION = {
+  polyarticulaire: 'Polyarticulaire : plusieurs articulations bougent, on peut charger lourd.',
+  isolation: 'Isolation : une seule articulation bouge, le muscle est ciblé.',
+} as const;
+
+const TEXTE_SENS = { poussee: 'Poussée', tirage: 'Tirage', neutre: 'Gainage / neutre' } as const;
+
+/** Fiche détaillée : description, consignes, disponibilité et mon historique sur l'exercice. */
+export function FicheExercice() {
+  const { id = '' } = useParams();
+  const exercices = useExercices();
+  const exercice = exercices?.find((e) => e.id === id);
+
+  if (!exercices) return null;
+  if (!exercice) {
+    return (
+      <>
+        <BoutonRetour />
+        <div className="carte vide">
+          <h3>Exercice introuvable</h3>
+        </div>
+      </>
+    );
+  }
+  return <Fiche exercice={exercice} />;
+}
+
+/** Retour à la liste en gardant les filtres (retour arrière si on vient de l'app). */
+function BoutonRetour() {
+  const naviguer = useNavigate();
+  const location = useLocation();
+  return (
+    <button
+      type="button"
+      className="bouton-retour"
+      onClick={() => (location.key !== 'default' ? naviguer(-1) : naviguer('/exercices'))}
+    >
+      <IconeRetour taille={22} />
+      Exercices
+    </button>
+  );
+}
+
+function Fiche({ exercice: e }: { exercice: Exercice }) {
+  const historique = useHistoriqueExercice(e.id);
+  const charge = TEXTE_CHARGE[e.positionCharge];
+
+  return (
+    <>
+      <BoutonRetour />
+      <Entete surtitre={libelleMuscle(e.musclePrincipal)} titre={e.nom} />
+
+      <div className="etiquettes">
+        <span className="etiquette">{libelleType(e.type)}</span>
+        <span className="etiquette neutre">
+          {e.mouvement.articulation === 'polyarticulaire' ? 'Polyarticulaire' : 'Isolation'}
+        </span>
+        <span className="etiquette neutre">{TEXTE_SENS[e.mouvement.sens]}</span>
+      </div>
+
+      <section className="section">
+        <h2>Comment le faire</h2>
+        <ol className="carte consignes">
+          {e.consignes.map((c, i) => (
+            <li key={i}>
+              <span className="consigne-numero chiffres">{i + 1}</span>
+              {c}
+            </li>
+          ))}
+        </ol>
+      </section>
+
+      <section className="section">
+        <h2>Ce qu’il travaille</h2>
+        <div className="carte">
+          <div className="ligne">
+            <div className="libelle">
+              {libelleMuscle(e.musclePrincipal)}
+              <small>{libelleZone(e.musclePrincipal, e.zone)}</small>
+            </div>
+            <span className="etiquette">Principal</span>
+          </div>
+          {e.musclesSecondaires.length > 0 && (
+            <div className="ligne">
+              <div className="libelle">
+                {e.musclesSecondaires.map(libelleMuscle).join(', ')}
+                <small>Muscles secondaires</small>
+              </div>
+            </div>
+          )}
+          <div className="ligne">
+            <div className="libelle">
+              {charge.titre}
+              <small>{charge.texte}</small>
+            </div>
+          </div>
+          <div className="ligne">
+            <div className="libelle">
+              <small>{TEXTE_ARTICULATION[e.mouvement.articulation]}</small>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="section">
+        <h2>Ma salle</h2>
+        <div className="carte ligne">
+          <div className="libelle">
+            Disponible dans ma salle
+            <small>
+              {e.disponibleDansMaSalle
+                ? 'Proposé dans les séances et les suggestions'
+                : 'Jamais proposé dans les séances ni les suggestions'}
+            </small>
+          </div>
+          <Interrupteur
+            libelle="Disponible dans ma salle"
+            actif={e.disponibleDansMaSalle}
+            onChange={(v) => void definirDisponible(e.id, v)}
+          />
+        </div>
+      </section>
+
+      <section className="section">
+        <h2>Mon historique</h2>
+        {historique && historique.length === 0 && (
+          <p className="carte ligne note-carte">Pas encore de série enregistrée sur cet exercice.</p>
+        )}
+        {historique && historique.length > 0 && (
+          <ul className="carte historique">
+            {historique.map((h) => (
+              <li key={h.entrainementId} className="ligne">
+                <div className="libelle">
+                  <span className="chiffres historique-perf">{resumerSeries(h.series)}</span>
+                  <small>
+                    {new Date(h.date).toLocaleDateString('fr-FR', {
+                      weekday: 'short',
+                      day: 'numeric',
+                      month: 'short',
+                    })}{' '}
+                    · {h.nomSeance}
+                  </small>
+                </div>
+              </li>
+            ))}
+          </ul>
+        )}
+      </section>
+    </>
+  );
+}

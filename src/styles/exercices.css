@@ -1,0 +1,297 @@
+/* Bibliothèque d'exercices et fiche détaillée. */
+
+/* Bande opaque derrière la barre d'état / Dynamic Island */
+.cache-haut {
+  position: fixed;
+  z-index: 30;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: var(--haut-sur);
+  background: var(--fond);
+  pointer-events: none;
+}
+
+/* ---------- Barre de recherche et filtres (reste visible en défilant) ---------- */
+.barre-filtres {
+  position: sticky;
+  top: var(--haut-sur);
+  z-index: 10;
+  display: grid;
+  gap: 10px;
+  margin: 0 calc(-18px - var(--droite-sur)) 18px calc(-18px - var(--gauche-sur));
+  padding: 8px 0 12px;
+  background: var(--fond);
+  border-bottom: 1px solid var(--trait);
+}
+
+.champ-recherche {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: var(--tactile);
+  margin: 0 calc(18px + var(--droite-sur)) 0 calc(18px + var(--gauche-sur));
+  padding: 0 6px 0 16px;
+  border-radius: 999px;
+  background: var(--surface-2);
+  color: var(--texte-3);
+}
+
+.champ-recherche input {
+  flex: 1;
+  min-width: 0;
+  height: var(--tactile);
+  border: none;
+  background: none;
+  color: var(--texte);
+  outline: none;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.champ-recherche input::placeholder {
+  color: var(--texte-3);
+}
+
+/* Masque la croix native de Safari : on a la nôtre, plus grosse */
+.champ-recherche input::-webkit-search-cancel-button {
+  display: none;
+}
+
+.champ-recherche .effacer {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border: none;
+  border-radius: 50%;
+  background: none;
+  color: var(--texte-2);
+}
+
+/* ---------- Pastilles défilantes ---------- */
+.puces {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  padding: 0 calc(18px + var(--droite-sur)) 0 calc(18px + var(--gauche-sur));
+  scroll-padding-inline: 18px;
+}
+
+.puces::-webkit-scrollbar {
+  display: none;
+}
+
+.puce {
+  flex: none;
+  min-height: 44px;
+  padding: 0 16px;
+  border-radius: 999px;
+  border: 1px solid var(--trait);
+  background: var(--surface);
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--texte-2);
+  white-space: nowrap;
+  cursor: pointer;
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease,
+    transform 0.12s var(--ease);
+}
+
+.puce:active {
+  transform: scale(0.95);
+}
+
+.puce[aria-checked='true'] {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--sur-accent);
+}
+
+.puces-separateur {
+  flex: none;
+  width: 1px;
+  height: 24px;
+  background: var(--trait);
+}
+
+.section > h2 .compte {
+  color: var(--texte-3);
+  font-weight: 500;
+  margin-left: 4px;
+}
+
+/* ---------- Liste des exercices ---------- */
+.liste-exercices {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
+.ligne-exercice {
+  position: relative;
+  display: flex;
+  align-items: center;
+  min-height: 64px;
+}
+
+.ligne-exercice + .ligne-exercice {
+  border-top: 1px solid var(--trait);
+}
+
+.ligne-exercice-lien {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 2px;
+  align-self: stretch;
+  padding: 10px 4px 10px 16px;
+  color: inherit;
+  text-decoration: none;
+  transition: background-color 0.15s ease;
+}
+
+.ligne-exercice-lien:active {
+  background: var(--surface-2);
+}
+
+.ligne-exercice-nom {
+  font-weight: 600;
+  line-height: 1.25;
+}
+
+.ligne-exercice-meta {
+  font-size: 14px;
+  color: var(--texte-2);
+  line-height: 1.3;
+}
+
+.ligne-exercice.absent .ligne-exercice-nom,
+.ligne-exercice.absent .ligne-exercice-meta {
+  color: var(--texte-3);
+}
+
+.ligne-exercice.absent .ligne-exercice-nom {
+  text-decoration: line-through;
+  text-decoration-color: var(--texte-3);
+}
+
+/* ---------- Case "dans ma salle" ---------- */
+.case-salle {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 60px;
+  align-self: stretch;
+  border: none;
+  background: none;
+  cursor: pointer;
+}
+
+.case-salle-rond {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 2px solid var(--surface-3);
+  color: transparent;
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease,
+    color 0.2s ease,
+    transform 0.15s var(--ease);
+}
+
+.case-salle[aria-checked='true'] .case-salle-rond {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--sur-accent);
+}
+
+.case-salle:active .case-salle-rond {
+  transform: scale(0.85);
+}
+
+/* ---------- Fiche exercice ---------- */
+.bouton-retour {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  min-height: 44px;
+  margin: -6px 0 4px -10px;
+  padding: 0 12px 0 4px;
+  border: none;
+  border-radius: 999px;
+  background: none;
+  color: var(--accent-texte);
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.bouton-retour:active {
+  background: var(--surface-2);
+}
+
+.etiquettes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: -8px 0 24px;
+}
+
+.etiquette.neutre {
+  background: var(--surface-2);
+  color: var(--texte-2);
+}
+
+.consignes {
+  list-style: none;
+  margin: 0;
+  padding: 6px 0;
+}
+
+.consignes li {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 10px 16px;
+  font-size: 18px;
+  line-height: 1.35;
+}
+
+.consigne-numero {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: var(--accent-doux);
+  color: var(--accent-texte);
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.historique {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.historique-perf {
+  font-size: 22px;
+  font-weight: 700;
+}
+
+.note-carte {
+  margin: 0;
+  color: var(--texte-2);
+}
