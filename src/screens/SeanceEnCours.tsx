@@ -1,10 +1,19 @@
 import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { AnimationGeste } from '../components/AnimationGeste';
 import { ChronoRepos } from '../components/ChronoRepos';
 import { Feuille } from '../components/Feuille';
 import { FeuilleEchauffement } from '../components/FeuilleEchauffement';
 import { FeuilleRemplacement } from '../components/FeuilleRemplacement';
-import { IconeChevron, IconeCoche, IconeEchange, IconeFlamme, IconeHausse, IconeRetour } from '../components/Icones';
+import {
+  IconeChevron,
+  IconeCoche,
+  IconeEchange,
+  IconeFlamme,
+  IconeHausse,
+  IconeLecture,
+  IconeRetour,
+} from '../components/Icones';
 import { useMessage } from '../components/Message';
 import { Reglette } from '../components/Reglette';
 import { exerciceParId } from '../data/exercices';
@@ -70,6 +79,7 @@ function Deroulement({ e, plan }: { e: Entrainement; plan: ExerciceDeSeance[] })
 
   const [feuilleFin, setFeuilleFin] = useState(false);
   const [feuilleRemplacer, setFeuilleRemplacer] = useState(false);
+  const [feuilleGeste, setFeuilleGeste] = useState(false);
   const [serieEditee, setSerieEditee] = useState<number | null>(null);
 
   useEcranAllume(true);
@@ -225,6 +235,7 @@ function Deroulement({ e, plan }: { e: Entrainement; plan: ExerciceDeSeance[] })
           surcharge={surcharge}
           echauffementPossible={faites.length === 0}
           onRemplacer={() => setFeuilleRemplacer(true)}
+          onGeste={() => setFeuilleGeste(true)}
           onEchauffement={(charge, reps) =>
             void enregistrerEchauffement(e.id, {
               exerciceId: item.exerciceId,
@@ -253,6 +264,25 @@ function Deroulement({ e, plan }: { e: Entrainement; plan: ExerciceDeSeance[] })
           }
         />
       )}
+
+      <Feuille ouverte={feuilleGeste} onFermer={() => setFeuilleGeste(false)} titre={exercice?.nom ?? 'Geste'}>
+        <div className="carte carte-geste">
+          <AnimationGeste exerciceId={item.exerciceId} />
+        </div>
+        <ol className="carte consignes">
+          {exercice?.consignes.map((c, i) => (
+            <li key={i}>
+              <span className="consigne-numero chiffres">{i + 1}</span>
+              {c}
+            </li>
+          ))}
+        </ol>
+        <div className="actions">
+          <button type="button" className="bouton principal large" onClick={() => setFeuilleGeste(false)}>
+            Compris
+          </button>
+        </div>
+      </Feuille>
 
       <FeuilleRemplacement
         ouverte={feuilleRemplacer}
@@ -324,6 +354,7 @@ interface PropsSaisie {
   onTerminer: () => void;
   onRemplacer: () => void;
   onEchauffement: (charge: number, reps: number) => void;
+  onGeste: () => void;
 }
 
 /** Saisie de la charge et des reps + gros bouton Valider (ou chrono pendant le repos). */
@@ -341,6 +372,7 @@ function Saisie({
   onTerminer,
   onRemplacer,
   onEchauffement,
+  onGeste,
 }: PropsSaisie) {
   const [charge, setCharge] = useState(proposition.charge);
   const [reps, setReps] = useState(proposition.reps);
@@ -349,6 +381,10 @@ function Saisie({
   return (
     <>
       <div className="seance-outils">
+        <button type="button" className="puce outil" onClick={onGeste}>
+          <IconeLecture taille={18} />
+          Geste
+        </button>
         <button type="button" className="puce outil" onClick={onRemplacer}>
           <IconeEchange taille={18} />
           Remplacer

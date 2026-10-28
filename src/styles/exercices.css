@@ -297,6 +297,94 @@
   opacity: 0.35;
 }
 
+/* ---------- Animation du geste ---------- */
+.carte-geste {
+  padding: 10px 12px 6px;
+  margin-bottom: 10px;
+}
+
+.geste {
+  display: block;
+  width: 100%;
+  max-width: 340px;
+  height: auto;
+  margin: 0 auto;
+}
+
+.geste-corps {
+  stroke: var(--geste-corps);
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.geste-corps .geste-tete,
+.geste-corps .geste-tronc {
+  fill: var(--geste-corps);
+}
+
+.geste-corps .geste-tete {
+  stroke: none;
+}
+
+.geste-loin {
+  stroke: var(--geste-loin);
+}
+
+.geste-corps.fantome {
+  opacity: 0.22;
+}
+
+.geste-decor {
+  fill: var(--surface-3);
+}
+
+.geste-decor-ligne {
+  stroke: var(--surface-3);
+  stroke-linecap: round;
+}
+
+.geste-sol {
+  stroke: var(--surface-3);
+  stroke-width: 1.5;
+  stroke-linecap: round;
+}
+
+.geste-rail {
+  stroke: var(--surface-3);
+  stroke-width: 2;
+}
+
+.geste-materiel {
+  stroke: var(--accent-texte);
+  fill: none;
+  stroke-width: 3;
+  stroke-linecap: round;
+}
+
+.geste-materiel .plein {
+  fill: var(--accent-texte);
+  stroke: none;
+}
+
+.geste-cable {
+  stroke: var(--texte-3);
+  stroke-width: 1.2;
+}
+
+.geste-poulie {
+  fill: var(--surface-3);
+  stroke: var(--texte-3);
+  stroke-width: 1.2;
+}
+
+.geste-legende {
+  margin: 2px 0 4px;
+  text-align: center;
+  font-size: 13px;
+  color: var(--texte-3);
+}
+
 /* ---------- Fiche exercice ---------- */
 .bouton-retour {
   display: inline-flex;

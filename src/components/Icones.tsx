@@ -190,6 +190,16 @@ export function IconeTri(p: Props) {
   );
 }
 
+/** Voir le geste : bouton lecture dans un cercle. */
+export function IconeLecture(p: Props) {
+  return (
+    <Svg {...p}>
+      <circle cx="12" cy="12" r="9" />
+      <path d="M10 8.5v7l5.5-3.5z" />
+    </Svg>
+  );
+}
+
 /** Remplacer : deux flèches opposées. */
 export function IconeEchange(p: Props) {
   return (

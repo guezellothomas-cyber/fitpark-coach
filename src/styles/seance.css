@@ -246,7 +246,14 @@
 .seance-outils {
   display: flex;
   gap: 8px;
-  margin: 2px 0 8px;
+  margin: 2px -18px 8px;
+  padding: 0 18px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.seance-outils::-webkit-scrollbar {
+  display: none;
 }
 
 .puce.outil {

@@ -1,4 +1,5 @@
 import { useParams } from 'react-router-dom';
+import { AnimationGeste } from '../components/AnimationGeste';
 import { BoutonRetour } from '../components/BoutonRetour';
 import { Entete } from '../components/Entete';
 import { Interrupteur } from '../components/Interrupteur';
@@ -65,6 +66,22 @@ function Fiche({ exercice: e }: { exercice: Exercice }) {
         <span className="etiquette neutre">{TEXTE_SENS[e.mouvement.sens]}</span>
       </div>
 
+      <section className="section">
+        <h2>Le geste</h2>
+        <div className="carte carte-geste">
+          <AnimationGeste exerciceId={e.id} />
+          <p className="geste-legende">Montée contrôlée, descente lente</p>
+        </div>
+        <ol className="carte consignes">
+          {e.consignes.map((c, i) => (
+            <li key={i}>
+              <span className="consigne-numero chiffres">{i + 1}</span>
+              {c}
+            </li>
+          ))}
+        </ol>
+      </section>
+
       <div className="carte carte-silhouette">
         <SilhouetteMuscles
           carte={regionsExercice(e)}
@@ -85,18 +102,6 @@ function Fiche({ exercice: e }: { exercice: Exercice }) {
           )}
         </div>
       </div>
-
-      <section className="section">
-        <h2>Comment le faire</h2>
-        <ol className="carte consignes">
-          {e.consignes.map((c, i) => (
-            <li key={i}>
-              <span className="consigne-numero chiffres">{i + 1}</span>
-              {c}
-            </li>
-          ))}
-        </ol>
-      </section>
 
       <section className="section">
         <h2>Ce qu’il travaille</h2>
