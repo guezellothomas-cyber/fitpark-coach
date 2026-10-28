@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { BoutonRetour } from '../components/BoutonRetour';
 import { Entete } from '../components/Entete';
+import { MiniatureExercice } from '../components/MiniatureExercice';
 import { IconeCroix, IconePlus, IconeRecherche } from '../components/Icones';
 import { useMessage } from '../components/Message';
 import { MUSCLES, libelleZone } from '../data/muscles';
@@ -114,9 +115,12 @@ export function AjoutExercice() {
                     disabled={deja}
                     onClick={() => void choisir(e.id, e.nom)}
                   >
-                    <span className="ligne-exercice-nom">{e.nom}</span>
-                    <span className="ligne-exercice-meta">
-                      {deja ? 'Déjà dans la séance' : `${libelleType(e.type)} · ${libelleZone(e.musclePrincipal, e.zone)}`}
+                    <MiniatureExercice exerciceId={e.id} />
+                    <span className="ligne-exercice-texte">
+                      <span className="ligne-exercice-nom">{e.nom}</span>
+                      <span className="ligne-exercice-meta">
+                        {deja ? 'Déjà dans la séance' : `${libelleType(e.type)} · ${libelleZone(e.musclePrincipal, e.zone)}`}
+                      </span>
                     </span>
                   </button>
                   {!deja && (

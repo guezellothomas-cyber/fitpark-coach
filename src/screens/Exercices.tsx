@@ -2,6 +2,7 @@ import { useMemo } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { CaseSalle } from '../components/CaseSalle';
 import { Entete } from '../components/Entete';
+import { MiniatureExercice } from '../components/MiniatureExercice';
 import { IconeCroix, IconeRecherche } from '../components/Icones';
 import { Puces } from '../components/Puces';
 import { EXERCICES } from '../data/exercices';
@@ -154,9 +155,12 @@ function LigneExercice({ exercice: e }: { exercice: Exercice }) {
   return (
     <li className={`ligne-exercice${e.disponibleDansMaSalle ? '' : ' absent'}`}>
       <Link to={`/exercices/${e.id}`} className="ligne-exercice-lien">
-        <span className="ligne-exercice-nom">{e.nom}</span>
-        <span className="ligne-exercice-meta">
-          {libelleType(e.type)} · {libelleZone(e.musclePrincipal, e.zone)}
+        <MiniatureExercice exerciceId={e.id} />
+        <span className="ligne-exercice-texte">
+          <span className="ligne-exercice-nom">{e.nom}</span>
+          <span className="ligne-exercice-meta">
+            {libelleType(e.type)} · {libelleZone(e.musclePrincipal, e.zone)}
+          </span>
         </span>
       </Link>
       <CaseSalle exerciceId={e.id} nom={e.nom} disponible={e.disponibleDansMaSalle} />

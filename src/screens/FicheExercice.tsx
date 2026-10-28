@@ -2,7 +2,9 @@ import { useParams } from 'react-router-dom';
 import { BoutonRetour } from '../components/BoutonRetour';
 import { Entete } from '../components/Entete';
 import { Interrupteur } from '../components/Interrupteur';
+import { SilhouetteMuscles } from '../components/SilhouetteMuscles';
 import { libelleMuscle, libelleZone } from '../data/muscles';
+import { regionsExercice } from '../data/regions';
 import { libelleType, type Exercice } from '../data/types';
 import { useHistoriqueExercice } from '../db/historique';
 import { definirDisponible, useExercices } from '../db/salle';
@@ -61,6 +63,27 @@ function Fiche({ exercice: e }: { exercice: Exercice }) {
           {e.mouvement.articulation === 'polyarticulaire' ? 'Polyarticulaire' : 'Isolation'}
         </span>
         <span className="etiquette neutre">{TEXTE_SENS[e.mouvement.sens]}</span>
+      </div>
+
+      <div className="carte carte-silhouette">
+        <SilhouetteMuscles
+          carte={regionsExercice(e)}
+          titre={`Muscles travaillés : ${[e.musclePrincipal, ...e.musclesSecondaires].map(libelleMuscle).join(', ')}`}
+        />
+        <div className="silhouette-vues" aria-hidden="true">
+          <span>Face</span>
+          <span>Dos</span>
+        </div>
+        <div className="legende">
+          <span>
+            <i style={{ background: 'var(--rouge-vif)' }} /> Travaille le plus
+          </span>
+          {e.musclesSecondaires.length > 0 && (
+            <span>
+              <i style={{ background: 'var(--rouge-clair)' }} /> Travaille aussi
+            </span>
+          )}
+        </div>
       </div>
 
       <section className="section">

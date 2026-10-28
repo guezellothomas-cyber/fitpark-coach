@@ -23,6 +23,11 @@
   --accent-doux: rgba(200, 241, 53, 0.12);
   --danger: #ff7a66;
   --ombre: 0 10px 30px rgba(0, 0, 0, 0.45);
+  /* Silhouette des muscles */
+  --corps: #3a3f34;
+  --corps-fond: #2b2f26;
+  --rouge-vif: #ff2a1f;
+  --rouge-clair: #ff9a90;
 }
 
 /* ---------- Thème clair ---------- */
@@ -42,6 +47,10 @@
   --accent-doux: rgba(120, 160, 0, 0.13);
   --danger: #c8381f;
   --ombre: 0 10px 30px rgba(30, 35, 20, 0.12);
+  --corps: #d8dacf;
+  --corps-fond: #e6e8de;
+  --rouge-vif: #e8170b;
+  --rouge-clair: #f8a59d;
 }
 
 /* ---------- Typographie ---------- */
