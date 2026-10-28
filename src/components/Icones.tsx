@@ -154,6 +154,42 @@ export function IconeChevron(p: Props) {
   );
 }
 
+/** Poignée de glisser-déposer : six points. */
+export function IconePoignee(p: Props) {
+  return (
+    <Svg {...p} strokeWidth={3}>
+      <path d="M9 6h.01M15 6h.01M9 12h.01M15 12h.01M9 18h.01M15 18h.01" />
+    </Svg>
+  );
+}
+
+/** Superset : deux maillons. */
+export function IconeLien(p: Props) {
+  return (
+    <Svg {...p}>
+      <path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1" />
+      <path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1" />
+    </Svg>
+  );
+}
+
+/** Le guide : une étincelle. */
+export function IconeGuide(p: Props) {
+  return (
+    <Svg {...p}>
+      <path d="M12 3v4M12 17v4M3 12h4M17 12h4M6 6l2.5 2.5M15.5 15.5 18 18M6 18l2.5-2.5M15.5 8.5 18 6" />
+    </Svg>
+  );
+}
+
+export function IconeTri(p: Props) {
+  return (
+    <Svg {...p}>
+      <path d="M7 4v16M3.5 16.5 7 20l3.5-3.5M14 6h7M14 12h5M14 18h3" />
+    </Svg>
+  );
+}
+
 export function IconeChantier(p: Props) {
   return (
     <Svg {...p}>

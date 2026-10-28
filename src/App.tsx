@@ -5,7 +5,9 @@ import { BarreOnglets } from './components/BarreOnglets';
 import { FournisseurMessage } from './components/Message';
 import { useReglages } from './db/reglages';
 import { useAppliquerTheme } from './lib/theme';
+import { AjoutExercice } from './screens/AjoutExercice';
 import { Aujourdhui } from './screens/Aujourdhui';
+import { EditeurSeance } from './screens/EditeurSeance';
 import { Exercices } from './screens/Exercices';
 import { FicheExercice } from './screens/FicheExercice';
 import { Progres } from './screens/Progres';
@@ -47,6 +49,8 @@ function Ecran() {
       <Routes>
         <Route path="/" element={<Aujourdhui />} />
         <Route path="/seances" element={<Seances />} />
+        <Route path="/seances/:id" element={<EditeurSeance />} />
+        <Route path="/seances/:id/ajouter" element={<AjoutExercice />} />
         <Route path="/exercices" element={<Exercices />} />
         <Route path="/exercices/:id" element={<FicheExercice />} />
         <Route path="/progres" element={<Progres />} />

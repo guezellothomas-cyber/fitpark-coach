@@ -90,7 +90,10 @@ export function Exercices() {
           )}
         </label>
         <Puces libelle="Muscle" options={OPTIONS_MUSCLE} valeur={muscle} onChange={(v) => filtrer('muscle', v)} />
-        <div className="puces">
+      </div>
+
+      {/* Filtres secondaires : ils défilent avec la liste pour laisser plus de place */}
+      <div className="puces filtres-secondaires">
           <button
             type="button"
             role="switch"
@@ -113,7 +116,6 @@ export function Exercices() {
               {o.libelle}
             </button>
           ))}
-        </div>
       </div>
 
       {exercices && resultats.length === 0 && (

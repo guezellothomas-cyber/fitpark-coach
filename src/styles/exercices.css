@@ -19,10 +19,13 @@
   z-index: 10;
   display: grid;
   gap: 10px;
-  margin: 0 calc(-18px - var(--droite-sur)) 18px calc(-18px - var(--gauche-sur));
-  padding: 8px 0 12px;
+  margin: 0 calc(-18px - var(--droite-sur)) 0 calc(-18px - var(--gauche-sur));
+  padding: 8px 0 10px;
   background: var(--fond);
-  border-bottom: 1px solid var(--trait);
+}
+
+.filtres-secondaires {
+  margin: 0 calc(-18px - var(--droite-sur)) 20px calc(-18px - var(--gauche-sur));
 }
 
 .champ-recherche {

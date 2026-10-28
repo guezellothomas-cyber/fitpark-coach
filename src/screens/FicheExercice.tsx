@@ -1,6 +1,6 @@
-import { useLocation, useNavigate, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
+import { BoutonRetour } from '../components/BoutonRetour';
 import { Entete } from '../components/Entete';
-import { IconeRetour } from '../components/Icones';
 import { Interrupteur } from '../components/Interrupteur';
 import { libelleMuscle, libelleZone } from '../data/muscles';
 import { libelleType, type Exercice } from '../data/types';
@@ -36,7 +36,7 @@ export function FicheExercice() {
   if (!exercice) {
     return (
       <>
-        <BoutonRetour />
+        <BoutonRetour libelle="Retour" repli="/exercices" />
         <div className="carte vide">
           <h3>Exercice introuvable</h3>
         </div>
@@ -46,29 +46,13 @@ export function FicheExercice() {
   return <Fiche exercice={exercice} />;
 }
 
-/** Retour à la liste en gardant les filtres (retour arrière si on vient de l'app). */
-function BoutonRetour() {
-  const naviguer = useNavigate();
-  const location = useLocation();
-  return (
-    <button
-      type="button"
-      className="bouton-retour"
-      onClick={() => (location.key !== 'default' ? naviguer(-1) : naviguer('/exercices'))}
-    >
-      <IconeRetour taille={22} />
-      Exercices
-    </button>
-  );
-}
-
 function Fiche({ exercice: e }: { exercice: Exercice }) {
   const historique = useHistoriqueExercice(e.id);
   const charge = TEXTE_CHARGE[e.positionCharge];
 
   return (
     <>
-      <BoutonRetour />
+      <BoutonRetour libelle="Retour" repli="/exercices" />
       <Entete surtitre={libelleMuscle(e.musclePrincipal)} titre={e.nom} />
 
       <div className="etiquettes">

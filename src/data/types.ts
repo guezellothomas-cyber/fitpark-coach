@@ -48,6 +48,11 @@ export interface ExerciceCatalogue {
   positionCharge: PositionCharge;
   /** 2 ou 3 consignes courtes d'exécution. */
   consignes: string[];
+  /**
+   * Exercice de référence : un classique que le guide préfère proposer
+   * quand plusieurs exercices répondent aussi bien aux règles.
+   */
+  reference: boolean;
 }
 
 /** Un exercice avec mon réglage personnel "disponible dans ma salle". */

@@ -54,8 +54,31 @@ function ex<M extends MuscleId>(
     zone,
     positionCharge,
     consignes,
+    reference: REFERENCES.has(id),
   };
 }
+
+/**
+ * Exercices de référence : les classiques que le guide propose en priorité
+ * quand plusieurs exercices répondent aussi bien aux règles.
+ */
+export const REFERENCES: ReadonlySet<string> = new Set([
+  'developpe-couche-barre', 'developpe-incline-halteres', 'ecarte-poulie-haute', 'dips-buste-penche',
+  'tractions', 'tirage-vertical', 'tirage-horizontal-poulie', 'rowing-barre', 'rowing-haltere',
+  'pull-over-poulie', 'souleve-de-terre',
+  'hyperextensions',
+  'developpe-militaire', 'developpe-halteres-epaules', 'elevations-laterales',
+  'elevation-laterale-poulie', 'face-pull', 'oiseau-pec-deck',
+  'shrug-halteres',
+  'curl-barre', 'curl-incline', 'curl-marteau',
+  'extension-poulie-haute', 'extension-corde-tete', 'barre-au-front', 'dips',
+  'presse-cuisses', 'squat-barre', 'hack-squat', 'leg-extension', 'split-squat-bulgare',
+  'leg-curl-assis', 'souleve-roumain',
+  'hip-thrust-barre', 'hip-thrust-machine', 'abducteurs-machine',
+  'adducteurs-machine',
+  'mollets-debout', 'mollets-assis',
+  'crunch-poulie', 'releves-jambes', 'gainage',
+]);
 
 export const EXERCICES: readonly ExerciceCatalogue[] = [
   // ───────────── Pectoraux ─────────────

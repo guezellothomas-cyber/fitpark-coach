@@ -242,7 +242,8 @@
   position: fixed;
   z-index: 60;
   left: 50%;
-  bottom: calc(var(--bas-sur) + var(--barre-onglets) + 22px);
+  /* En haut de l'écran : ne cache jamais les boutons du bas */
+  top: calc(var(--haut-sur) + 10px);
   transform: translateX(-50%);
   max-width: calc(100% - 32px);
   padding: 12px 20px;
@@ -263,7 +264,7 @@
 @keyframes message {
   0% {
     opacity: 0;
-    transform: translate(-50%, 12px);
+    transform: translate(-50%, -12px);
   }
   8%,
   88% {
@@ -297,6 +298,15 @@
 }
 
 /* Quand le bandeau est affiché, l'écran n'a plus besoin de la marge Dynamic Island */
-.bandeau-maj ~ .ecran {
-  padding-top: 14px;
+.bandeau-maj ~ .ecran::before {
+  height: 14px;
+}
+
+.bandeau-maj ~ .ecran .barre-filtres {
+  top: 0;
+}
+
+/* Le bandeau couvre déjà la Dynamic Island */
+.app:has(.bandeau-maj) .cache-haut {
+  display: none;
 }

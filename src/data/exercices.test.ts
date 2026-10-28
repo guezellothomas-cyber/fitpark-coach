@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { EXERCICES } from './exercices';
+import { EXERCICES, REFERENCES } from './exercices';
 import { MUSCLES, ZONES, type MuscleId } from './muscles';
 
 /** Vérifie que le catalogue est cohérent (pas de doublon, zones valides, consignes présentes). */
@@ -42,6 +42,11 @@ describe('catalogue des exercices', () => {
       const n = EXERCICES.filter((e) => e.musclePrincipal === (m as MuscleId)).length;
       expect(n, m).toBeGreaterThanOrEqual(2);
     }
+  });
+
+  it('ne référence que des exercices existants', () => {
+    const ids = new Set(EXERCICES.map((e) => e.id));
+    for (const id of REFERENCES) expect(ids.has(id), id).toBe(true);
   });
 
   it('contient les exercices de la liste de départ', () => {

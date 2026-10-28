@@ -1,0 +1,369 @@
+/* Liste des séances, éditeur de séance, ajout d'exercice. */
+
+/* ---------- Bouton principal collé en bas de l'écran (à portée de pouce) ---------- */
+.actions-bas {
+  position: sticky;
+  bottom: 0;
+  z-index: 5;
+  margin: auto -18px -28px;
+  padding: 18px 18px 14px;
+  background: linear-gradient(to bottom, transparent, var(--fond) 34%);
+}
+
+/* ---------- Liste des séances ---------- */
+.liste-seances {
+  list-style: none;
+  margin: 0 0 12px;
+  padding: 0;
+  display: grid;
+  gap: 12px;
+}
+
+.carte-seance {
+  display: grid;
+  gap: 4px;
+  width: 100%;
+  padding: 16px 18px 18px;
+  text-align: left;
+  cursor: pointer;
+  transition: transform 0.12s var(--ease);
+}
+
+.carte-seance:active {
+  transform: scale(0.98);
+}
+
+.carte-seance-jours {
+  display: flex;
+  gap: 5px;
+  margin-bottom: 6px;
+}
+
+.jour-mini {
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--texte-3);
+  background: var(--surface-2);
+}
+
+.jour-mini.actif {
+  background: var(--accent);
+  color: var(--sur-accent);
+}
+
+.jour-mini.aujourdhui {
+  box-shadow: 0 0 0 2px var(--fond), 0 0 0 3px var(--texte-3);
+}
+
+.carte-seance-nom {
+  font-family: var(--police-titre);
+  font-size: 28px;
+  font-weight: 700;
+  line-height: 1.05;
+}
+
+.carte-seance-meta {
+  color: var(--texte-2);
+  font-size: 15px;
+}
+
+/* ---------- Éditeur ---------- */
+.titre-editable {
+  width: 100%;
+  margin: 2px 0 22px;
+  padding: 4px 0;
+  border: none;
+  border-bottom: 2px solid var(--trait);
+  background: none;
+  font-family: var(--police-titre);
+  font-size: 38px;
+  font-weight: 700;
+  line-height: 1.1;
+  outline: none;
+  transition: border-color 0.2s ease;
+}
+
+.titre-editable:focus {
+  border-bottom-color: var(--accent);
+}
+
+.titre-editable::placeholder {
+  color: var(--texte-3);
+}
+
+.jours {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 6px;
+}
+
+.jour {
+  aspect-ratio: 1;
+  min-height: 44px;
+  border-radius: 50%;
+  border: 1px solid var(--trait);
+  background: var(--surface);
+  font-weight: 700;
+  font-size: 17px;
+  color: var(--texte-2);
+  cursor: pointer;
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease,
+    transform 0.12s var(--ease);
+}
+
+.jour:active {
+  transform: scale(0.92);
+}
+
+.jour[aria-pressed='true'] {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--sur-accent);
+}
+
+.muscles-choix {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.puce[aria-pressed='true'] {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--sur-accent);
+}
+
+.puce .rang {
+  display: inline-grid;
+  place-items: center;
+  width: 20px;
+  height: 20px;
+  margin: 0 6px 0 -6px;
+  border-radius: 50%;
+  background: var(--sur-accent);
+  color: var(--accent);
+  font-size: 13px;
+}
+
+.titre-section {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 0 4px 8px;
+}
+
+.titre-section h2 {
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--texte-3);
+  margin: 0;
+}
+
+.lien-action {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 40px;
+  padding: 0 4px;
+  border: none;
+  background: none;
+  color: var(--accent-texte);
+  font-weight: 600;
+  font-size: 15px;
+  cursor: pointer;
+}
+
+.lien-action.danger {
+  color: var(--danger);
+  min-height: var(--tactile);
+}
+
+.section.centre {
+  display: flex;
+  justify-content: center;
+}
+
+/* ---------- Liste ordonnée des exercices de la séance ---------- */
+.liste-seance {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.element-seance {
+  position: relative;
+  padding-bottom: 6px;
+}
+
+.element-seance.glisse {
+  z-index: 3;
+}
+
+.element-seance.glisse .element-seance-carte {
+  box-shadow: var(--ombre);
+  border-color: var(--accent);
+}
+
+.element-seance-carte {
+  display: flex;
+  align-items: stretch;
+  transition:
+    box-shadow 0.2s ease,
+    border-color 0.2s ease;
+}
+
+/* Exercices liés en superset : barre d'accent sur la gauche */
+.element-seance.lie .element-seance-carte,
+.element-seance.lie-avant .element-seance-carte {
+  border-left: 4px solid var(--accent);
+}
+
+.poignee {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 48px;
+  border: none;
+  background: none;
+  color: var(--texte-3);
+  cursor: grab;
+  /* Indispensable sur iPhone : sans ça, le doigt fait défiler la page au lieu de déplacer */
+  touch-action: none;
+}
+
+.element-seance-corps {
+  flex: 1;
+  min-width: 0;
+  display: grid;
+  gap: 3px;
+  padding: 14px 16px 14px 0;
+  border: none;
+  background: none;
+  text-align: left;
+  cursor: pointer;
+}
+
+.element-seance-nom {
+  font-weight: 600;
+  line-height: 1.25;
+}
+
+.element-seance-numero {
+  display: inline-block;
+  min-width: 20px;
+  margin-right: 6px;
+  color: var(--accent-texte);
+  font-size: 19px;
+}
+
+.element-seance-resume {
+  color: var(--texte-2);
+  font-size: 15px;
+}
+
+.bouton-superset {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0 auto;
+  min-height: 34px;
+  padding: 0 12px;
+  border: none;
+  border-radius: 999px;
+  background: none;
+  color: var(--texte-3);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.bouton-superset[aria-pressed='true'] {
+  color: var(--accent-texte);
+  background: var(--accent-doux);
+}
+
+/* ---------- Le guide ---------- */
+.titre-guide {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--accent-texte) !important;
+}
+
+.guide-contexte {
+  margin: 0;
+  padding: 14px 16px 0;
+  color: var(--texte-2);
+  font-size: 14px;
+}
+
+.bouton-rond {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: var(--tactile);
+  height: var(--tactile);
+  border-radius: 50%;
+  border: none;
+  background: var(--accent);
+  color: var(--sur-accent);
+  cursor: pointer;
+  transition: transform 0.12s var(--ease);
+}
+
+.bouton-rond:active {
+  transform: scale(0.9);
+}
+
+/* ---------- Réglages d'un exercice (panneau du bas) ---------- */
+.reglages-exercice {
+  margin: 4px 0 18px;
+}
+
+.ligne-reglage {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  min-height: 62px;
+  font-weight: 600;
+}
+
+.ligne-reglage + .ligne-reglage {
+  border-top: 1px solid var(--trait);
+}
+
+a.bouton {
+  color: inherit;
+  text-decoration: none;
+}
+
+/* ---------- Ajout d'exercice ---------- */
+.espace-filtres {
+  height: 18px;
+}
+
+button.ligne-exercice-lien {
+  border: none;
+  background: none;
+  text-align: left;
+  cursor: pointer;
+}
+
+.ajout-icone {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 56px;
+  color: var(--accent-texte);
+  pointer-events: none;
+}

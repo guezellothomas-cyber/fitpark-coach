@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Entete } from '../components/Entete';
 import { IconeAujourdhui } from '../components/Icones';
 import { db } from '../db/db';
+import { nomSeance } from '../db/seances';
 import { jourSemaine } from '../lib/format';
 
 /** Écran d'accueil : la séance prévue aujourd'hui et un gros bouton pour la lancer. */
@@ -41,9 +42,14 @@ export function Aujourdhui() {
 
       {seancesDuJour?.map((s) => (
         <div key={s.id} className="carte vide">
-          <span className="etiquette">{s.exercices.length} exercices</span>
-          <h3>{s.nom}</h3>
-          <p>Le mode séance arrive à l'étape 4.</p>
+          <span className="etiquette">
+            {s.exercices.length} exercice{s.exercices.length > 1 ? 's' : ''}
+          </span>
+          <h3>{nomSeance(s)}</h3>
+          <p>Le mode séance (lancer, chrono de repos) arrive à l'étape 4.</p>
+          <button type="button" className="bouton" onClick={() => naviguer(`/seances/${s.id}`)}>
+            Voir la séance
+          </button>
         </div>
       ))}
     </>

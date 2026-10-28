@@ -126,13 +126,28 @@ select {
 
 .ecran {
   flex: 1;
+  /* En colonne : permet de pousser le bouton principal tout en bas quand la page est courte */
+  display: flex;
+  flex-direction: column;
   overflow-y: auto;
   overscroll-behavior-y: contain;
   -webkit-overflow-scrolling: touch;
-  /* Marge du haut = zone de la Dynamic Island + respiration */
-  padding: calc(var(--haut-sur) + 14px) calc(var(--droite-sur) + 18px) 28px
-    calc(var(--gauche-sur) + 18px);
+  /* Pas de marge en haut sur la zone qui défile : Safari iOS placerait mal les éléments
+     collants (barre de recherche). L'espace pour la Dynamic Island est un bloc vide (::before). */
+  padding: 0 calc(var(--droite-sur) + 18px) 28px calc(var(--gauche-sur) + 18px);
   animation: entree-ecran 0.28s var(--ease);
+}
+
+.ecran::before {
+  content: '';
+  display: block;
+  height: calc(var(--haut-sur) + 14px);
+}
+
+/* Dans une colonne qui défile, rien ne doit être écrasé (surtout l'espace vide ci-dessus) */
+.ecran > *,
+.ecran::before {
+  flex-shrink: 0;
 }
 
 @keyframes entree-ecran {

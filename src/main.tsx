@@ -11,6 +11,7 @@ import '@fontsource/barlow-condensed/latin-700.css';
 import './styles/global.css';
 import './styles/composants.css';
 import './styles/exercices.css';
+import './styles/seances.css';
 import { App } from './App';
 
 createRoot(document.getElementById('root')!).render(

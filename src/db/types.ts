@@ -2,6 +2,7 @@
  * Types des données enregistrées sur le téléphone.
  * Tout est stocké dans IndexedDB (base locale du navigateur), rien ne part sur internet.
  */
+import type { MuscleId } from '../data/muscles';
 
 export type Theme = 'sombre' | 'clair' | 'auto';
 
@@ -45,7 +46,8 @@ export interface Seance {
   nom: string;
   /** Jours de la semaine : 1 = lundi … 7 = dimanche. */
   jours: number[];
-  muscles: string[];
+  /** Muscles ciblés, dans l'ordre de priorité (le premier est le muscle principal de la séance). */
+  muscles: MuscleId[];
   exercices: ExerciceDeSeance[];
   creeLe: number;
   modifieLe: number;
