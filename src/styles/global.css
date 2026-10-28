@@ -29,6 +29,13 @@
   /* Personnage animé */
   --geste-corps: #d3d6c8;
   --geste-loin: #6c7064;
+  /* Carte du corps (séries de la semaine) : une teinte, de discrète à intense */
+  --vol-1: #6e2a25;
+  --vol-2: #b8352b;
+  --vol-3: #ff3b2f;
+  /* Poussée / tirage (palette vérifiée : contraste et daltonisme) */
+  --poussee: #7d9e10;
+  --tirage: #4f86e0;
   --rouge-vif: #ff2a1f;
   --rouge-clair: #ff9a90;
 }
@@ -54,6 +61,11 @@
   --corps-fond: #e6e8de;
   --geste-corps: #4a4e42;
   --geste-loin: #a6aa9c;
+  --vol-1: #f6b8b2;
+  --vol-2: #ec6c60;
+  --vol-3: #c81d10;
+  --poussee: #6a9a00;
+  --tirage: #2f6fd6;
   --rouge-vif: #e8170b;
   --rouge-clair: #f8a59d;
 }

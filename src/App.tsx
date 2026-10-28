@@ -14,6 +14,7 @@ import { EditeurSeance } from './screens/EditeurSeance';
 import { Exercices } from './screens/Exercices';
 import { FicheExercice } from './screens/FicheExercice';
 import { Progres } from './screens/Progres';
+import { ProgressionExercice } from './screens/ProgressionExercice';
 import { Reglages } from './screens/Reglages';
 import { Seances } from './screens/Seances';
 
@@ -57,6 +58,7 @@ function Ecran() {
         <Route path="/exercices" element={<Exercices />} />
         <Route path="/exercices/:id" element={<FicheExercice />} />
         <Route path="/progres" element={<Progres />} />
+        <Route path="/progres/exercice/:id" element={<ProgressionExercice />} />
         <Route path="/reglages" element={<Reglages />} />
         <Route path="/aide/raccourci" element={<AideRaccourci />} />
         <Route path="/seance" element={<SeanceEnCours />} />

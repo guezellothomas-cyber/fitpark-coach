@@ -17,7 +17,7 @@ export const REGIONS_DOS = [
 ] as const;
 
 export type Region = (typeof REGIONS_FACE)[number] | (typeof REGIONS_DOS)[number];
-export type Intensite = 'fort' | 'leger';
+export type Intensite = 'fort' | 'moyen' | 'leger';
 export type CarteRegions = Partial<Record<Region, Intensite>>;
 
 /** Zones du dessin couvertes par chaque muscle. */

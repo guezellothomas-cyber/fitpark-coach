@@ -1,4 +1,4 @@
-import { useParams } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import { AnimationGeste } from '../components/AnimationGeste';
 import { BoutonRetour } from '../components/BoutonRetour';
 import { Entete } from '../components/Entete';
@@ -158,6 +158,11 @@ function Fiche({ exercice: e }: { exercice: Exercice }) {
         <h2>Mon historique</h2>
         {historique && historique.length === 0 && (
           <p className="carte ligne note-carte">Pas encore de série enregistrée sur cet exercice.</p>
+        )}
+        {historique && historique.length > 0 && (
+          <Link to={`/progres/exercice/${e.id}`} className="bouton large lien-progression">
+            Voir la progression et les records
+          </Link>
         )}
         {historique && historique.length > 0 && (
           <ul className="carte historique">

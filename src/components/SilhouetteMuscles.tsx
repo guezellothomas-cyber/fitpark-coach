@@ -60,13 +60,19 @@ const VUES = {
   dos: { regions: REGIONS_DOS, base: [...BASE_COMMUNE, ...BASE_DOS] },
 };
 
-function couleur(intensite: CarteRegions[Region]): string {
-  if (intensite === 'fort') return 'var(--rouge-vif)';
-  if (intensite === 'leger') return 'var(--rouge-clair)';
-  return 'var(--corps)';
+/**
+ * "exercice" : rouge vif = principal, rouge clair = secondaires.
+ * "volume" : échelle d'une seule teinte, de discrète (peu de séries) à intense (beaucoup).
+ */
+export type Echelle = 'exercice' | 'volume';
+
+function couleur(intensite: CarteRegions[Region], echelle: Echelle): string {
+  if (!intensite) return 'var(--corps)';
+  if (echelle === 'volume') return { leger: 'var(--vol-1)', moyen: 'var(--vol-2)', fort: 'var(--vol-3)' }[intensite];
+  return intensite === 'leger' ? 'var(--rouge-clair)' : 'var(--rouge-vif)';
 }
 
-function Vue({ vue, carte, decalage }: { vue: 'face' | 'dos'; carte: CarteRegions; decalage: number }) {
+function Vue({ vue, carte, decalage, echelle }: { vue: 'face' | 'dos'; carte: CarteRegions; decalage: number; echelle: Echelle }) {
   const { regions, base } = VUES[vue];
   const moitie = (
     <>
@@ -75,7 +81,7 @@ function Vue({ vue, carte, decalage }: { vue: 'face' | 'dos'; carte: CarteRegion
         <path key={`b${i}`} d={d} fill="var(--corps)" />
       ))}
       {regions.map((r) => (
-        <path key={r} d={FORMES[r]} fill={couleur(carte[r])} className={carte[r] ? `muscle-${carte[r]}` : undefined} />
+        <path key={r} d={FORMES[r]} fill={couleur(carte[r], echelle)} className={carte[r] ? `muscle-${carte[r]}` : undefined} />
       ))}
     </>
   );
@@ -100,12 +106,13 @@ interface Props {
   cadrage?: 'entier' | 'haut' | 'bas';
   className?: string;
   titre?: string;
+  echelle?: Echelle;
 }
 
 const CADRAGES = { entier: '14 0 72 200', haut: '16 2 68 104', bas: '22 80 56 116' } as const;
 
 /** Silhouette coloriée. Rouge vif = muscle principal, rouge clair = muscles secondaires. */
-export function SilhouetteMuscles({ carte, vues = 'les-deux', cadrage = 'entier', className, titre }: Props) {
+export function SilhouetteMuscles({ carte, vues = 'les-deux', cadrage = 'entier', className, titre, echelle = 'exercice' }: Props) {
   const deux = vues === 'les-deux';
   return (
     <svg
@@ -116,11 +123,11 @@ export function SilhouetteMuscles({ carte, vues = 'les-deux', cadrage = 'entier'
     >
       {deux ? (
         <>
-          <Vue vue="face" carte={carte} decalage={0} />
-          <Vue vue="dos" carte={carte} decalage={110} />
+          <Vue vue="face" carte={carte} decalage={0} echelle={echelle} />
+          <Vue vue="dos" carte={carte} decalage={110} echelle={echelle} />
         </>
       ) : (
-        <Vue vue={vues} carte={carte} decalage={0} />
+        <Vue vue={vues} carte={carte} decalage={0} echelle={echelle} />
       )}
     </svg>
   );
