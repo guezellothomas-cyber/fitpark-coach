@@ -190,6 +190,33 @@ export function IconeTri(p: Props) {
   );
 }
 
+/** Remplacer : deux flèches opposées. */
+export function IconeEchange(p: Props) {
+  return (
+    <Svg {...p}>
+      <path d="M4 8h14l-3.5-3.5M20 16H6l3.5 3.5" />
+    </Svg>
+  );
+}
+
+/** Échauffement : une flamme. */
+export function IconeFlamme(p: Props) {
+  return (
+    <Svg {...p}>
+      <path d="M12 21c-3.9 0-6.5-2.6-6.5-6.2 0-3.4 2.3-5.4 3.7-7.6.5 1.6 1.4 2.6 2.5 3.1-.2-2.9.9-5.6 3-7.3.3 2.9 1.8 4.6 3.1 6.4.9 1.3 1.7 2.8 1.7 4.9 0 4-2.7 6.7-7.5 6.7Z" />
+    </Svg>
+  );
+}
+
+/** Progression : une flèche vers le haut. */
+export function IconeHausse(p: Props) {
+  return (
+    <Svg {...p}>
+      <path d="M12 19V5M6 11l6-6 6 6" />
+    </Svg>
+  );
+}
+
 export function IconeChantier(p: Props) {
   return (
     <Svg {...p}>

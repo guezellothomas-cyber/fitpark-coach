@@ -242,6 +242,82 @@
   cursor: pointer;
 }
 
+/* Outils : remplacer, échauffement */
+.seance-outils {
+  display: flex;
+  gap: 8px;
+  margin: 2px 0 8px;
+}
+
+.puce.outil {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  color: var(--texte);
+}
+
+/* Proposition de surcharge progressive */
+.surcharge {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0 0 6px;
+  padding: 10px 10px 10px 14px;
+  border-radius: 16px;
+  background: var(--accent-doux);
+  color: var(--accent-texte);
+}
+
+.surcharge svg {
+  flex: none;
+}
+
+.surcharge p {
+  flex: 1;
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.3;
+  color: var(--texte);
+}
+
+.surcharge .bouton {
+  flex: none;
+  min-height: 48px;
+  padding: 0 16px;
+}
+
+.surcharge.appliquee {
+  background: transparent;
+  border: 1px dashed var(--accent-texte);
+}
+
+/* Échauffement */
+.echauffement {
+  list-style: none;
+  margin: 0 0 18px;
+  padding: 0;
+}
+
+.echauffement-perf {
+  font-size: 24px;
+  font-weight: 700;
+}
+
+.bouton.fait {
+  background: var(--accent-doux);
+  color: var(--accent-texte);
+  opacity: 1;
+}
+
+/* Remplacement */
+.liste-remplacement {
+  margin-bottom: 12px;
+}
+
+.remplacement-option {
+  padding: 4px 0 14px;
+}
+
 /* Saisie charge / reps */
 .seance-saisie {
   display: grid;

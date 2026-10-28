@@ -2,7 +2,9 @@ import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ChronoRepos } from '../components/ChronoRepos';
 import { Feuille } from '../components/Feuille';
-import { IconeChevron, IconeCoche, IconeRetour } from '../components/Icones';
+import { FeuilleEchauffement } from '../components/FeuilleEchauffement';
+import { FeuilleRemplacement } from '../components/FeuilleRemplacement';
+import { IconeChevron, IconeCoche, IconeEchange, IconeFlamme, IconeHausse, IconeRetour } from '../components/Icones';
 import { useMessage } from '../components/Message';
 import { Reglette } from '../components/Reglette';
 import { exerciceParId } from '../data/exercices';
@@ -11,15 +13,19 @@ import {
   ajusterRepos,
   allerA,
   arreterRepos,
+  enregistrerEchauffement,
   enregistrerSerie,
   modifierSerie,
+  remplacerExercice,
   supprimerSerie,
   terminer,
   useDerniereFois,
   useEntrainementEnCours,
 } from '../db/entrainement';
 import { useReglages } from '../db/reglages';
+import { useExercices } from '../db/salle';
 import type { Entrainement, ExerciceDeSeance, SerieFaite } from '../db/types';
+import { proposerSurcharge, type Surcharge } from '../lib/progression';
 import { etapeSuivante, reposApres, restantes, seriesDe, blocDe } from '../lib/deroulement';
 import { formatNombre } from '../lib/format';
 import { resumerSeries } from '../lib/perf';
@@ -57,8 +63,13 @@ function Deroulement({ e, plan }: { e: Entrainement; plan: ExerciceDeSeance[] })
   const numero = faites.length + 1;
   const derniereFois = useDerniereFois(item.exerciceId, e.id);
   const toutFini = plan.every((_, i) => restantes(plan, e.series, i) === 0);
+  const catalogue = useExercices();
+  // Surcharge progressive : proposée sur la première série de l'exercice.
+  const surcharge =
+    faites.length === 0 && derniereFois ? proposerSurcharge(derniereFois, item, reglages.pasCharge) : null;
 
   const [feuilleFin, setFeuilleFin] = useState(false);
+  const [feuilleRemplacer, setFeuilleRemplacer] = useState(false);
   const [serieEditee, setSerieEditee] = useState<number | null>(null);
 
   useEcranAllume(true);
@@ -207,10 +218,22 @@ function Deroulement({ e, plan }: { e: Entrainement; plan: ExerciceDeSeance[] })
 
       {derniereFois !== undefined && (
         <Saisie
-          key={`${index}-${numero}`}
+          key={`${index}-${item.exerciceId}-${numero}`}
           item={item}
           proposition={proposer(item, faites, derniereFois)}
           pas={reglages.pasCharge}
+          surcharge={surcharge}
+          echauffementPossible={faites.length === 0}
+          onRemplacer={() => setFeuilleRemplacer(true)}
+          onEchauffement={(charge, reps) =>
+            void enregistrerEchauffement(e.id, {
+              exerciceId: item.exerciceId,
+              charge,
+              reps,
+              faiteLe: Date.now(),
+              echauffement: true,
+            })
+          }
           libelleValider={toutFini ? 'Série bonus' : `Valider la série ${numero}`}
           enRepos={enRepos}
           reposFini={reposFini}
@@ -230,6 +253,19 @@ function Deroulement({ e, plan }: { e: Entrainement; plan: ExerciceDeSeance[] })
           }
         />
       )}
+
+      <FeuilleRemplacement
+        ouverte={feuilleRemplacer}
+        depart={exercice}
+        catalogue={catalogue}
+        exclus={new Set(plan.map((p) => p.exerciceId))}
+        onChoisir={(id, aussiSeance) => {
+          void remplacerExercice(e.id, index, id, aussiSeance);
+          setFeuilleRemplacer(false);
+          afficherMessage(`Remplacé par : ${exerciceParId(id)?.nom ?? ''}`);
+        }}
+        onFermer={() => setFeuilleRemplacer(false)}
+      />
 
       <FeuilleSerie
         serie={serieEditee !== null ? (e.series[serieEditee] ?? null) : null}
@@ -277,6 +313,8 @@ interface PropsSaisie {
   item: ExerciceDeSeance;
   proposition: { charge: number; reps: number };
   pas: number;
+  surcharge: Surcharge | null;
+  echauffementPossible: boolean;
   libelleValider: string;
   enRepos: boolean;
   reposFini: boolean;
@@ -284,15 +322,75 @@ interface PropsSaisie {
   chrono: ReactNode;
   onValider: (charge: number, reps: number) => void;
   onTerminer: () => void;
+  onRemplacer: () => void;
+  onEchauffement: (charge: number, reps: number) => void;
 }
 
 /** Saisie de la charge et des reps + gros bouton Valider (ou chrono pendant le repos). */
-function Saisie({ proposition, pas, libelleValider, enRepos, reposFini, toutFini, chrono, onValider, onTerminer }: PropsSaisie) {
+function Saisie({
+  proposition,
+  pas,
+  surcharge,
+  echauffementPossible,
+  libelleValider,
+  enRepos,
+  reposFini,
+  toutFini,
+  chrono,
+  onValider,
+  onTerminer,
+  onRemplacer,
+  onEchauffement,
+}: PropsSaisie) {
   const [charge, setCharge] = useState(proposition.charge);
   const [reps, setReps] = useState(proposition.reps);
+  const [echauffement, setEchauffement] = useState(false);
 
   return (
     <>
+      <div className="seance-outils">
+        <button type="button" className="puce outil" onClick={onRemplacer}>
+          <IconeEchange taille={18} />
+          Remplacer
+        </button>
+        {echauffementPossible && charge > 0 && (
+          <button type="button" className="puce outil" onClick={() => setEchauffement(true)}>
+            <IconeFlamme taille={18} />
+            Échauffement
+          </button>
+        )}
+      </div>
+
+      {surcharge && (
+        <div className={`surcharge${charge >= surcharge.charge ? ' appliquee' : ''}`}>
+          <IconeHausse taille={22} />
+          <p>
+            {charge >= surcharge.charge ? (
+              <>
+                <strong>{formatNombre(surcharge.charge)} kg</strong> : haut de la fourchette atteint la dernière fois.
+              </>
+            ) : (
+              <>
+                Haut de la fourchette atteint la dernière fois : essaie <strong>{formatNombre(surcharge.charge)} kg</strong>.
+              </>
+            )}
+          </p>
+          {charge < surcharge.charge && (
+            <button type="button" className="bouton principal" onClick={() => setCharge(surcharge.charge)}>
+              +{formatNombre(surcharge.charge - surcharge.avant)} kg
+            </button>
+          )}
+        </div>
+      )}
+
+      <FeuilleEchauffement
+        ouverte={echauffement}
+        chargeTravail={charge}
+        pas={pas}
+        onFaite={onEchauffement}
+        onFermer={() => setEchauffement(false)}
+      />
+
       <section className="seance-saisie">
         <div className="saisie-ligne">
           <span className="saisie-libelle">Charge</span>

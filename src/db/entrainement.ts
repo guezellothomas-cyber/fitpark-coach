@@ -56,6 +56,33 @@ export function enregistrerSerie(id: string, serie: SerieFaite, indexSuivant: nu
   }));
 }
 
+/** Enregistre une série d'échauffement : elle ne change ni l'exercice affiché ni le repos. */
+export function enregistrerEchauffement(id: string, serie: SerieFaite) {
+  return modifier(id, (e) => ({ series: [...e.series, { ...serie, echauffement: true }] }));
+}
+
+/**
+ * Remplace l'exercice à la position `index` (machine prise).
+ * Avec `aussiSeance`, la séance type est modifiée aussi, pour les prochaines fois.
+ */
+export async function remplacerExercice(id: string, index: number, nouvelId: string, aussiSeance: boolean) {
+  await db.transaction('rw', db.entrainements, db.seances, async () => {
+    const e = await db.entrainements.get(id);
+    const ancien = e?.plan?.[index];
+    if (!e?.plan || !ancien) return;
+    await db.entrainements.update(id, {
+      plan: e.plan.map((p, i) => (i === index ? { ...p, exerciceId: nouvelId } : p)),
+    });
+    if (!aussiSeance || !e.seanceId) return;
+    const seance = await db.seances.get(e.seanceId);
+    if (!seance || seance.exercices.some((x) => x.exerciceId === nouvelId)) return;
+    await db.seances.update(seance.id, {
+      exercices: seance.exercices.map((x) => (x.exerciceId === ancien.exerciceId ? { ...x, exerciceId: nouvelId } : x)),
+      modifieLe: Date.now(),
+    });
+  });
+}
+
 export function modifierSerie(id: string, position: number, serie: SerieFaite) {
   return modifier(id, (e) => ({ series: e.series.map((s, i) => (i === position ? serie : s)) }));
 }
