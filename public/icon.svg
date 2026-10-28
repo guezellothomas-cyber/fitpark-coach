@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <!-- Icône de l'app : un disque de fonte vu de face, coupé par une barre, sur fond graphite. -->
+  <rect width="512" height="512" rx="112" fill="#0e0f0c"/>
+  <circle cx="256" cy="256" r="150" fill="none" stroke="#c8f135" stroke-width="44"/>
+  <circle cx="256" cy="256" r="58" fill="none" stroke="#c8f135" stroke-width="20" opacity=".55"/>
+  <rect x="86" y="236" width="340" height="40" rx="20" fill="#c8f135"/>
+</svg>

@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="fr" data-theme="sombre">
+  <head>
+    <meta charset="UTF-8" />
+    <!-- viewport-fit=cover : l'app occupe tout l'écran, y compris sous la Dynamic Island.
+         Les marges sont ensuite gérées en CSS avec env(safe-area-inset-*). -->
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, viewport-fit=cover"
+    />
+    <title>FitPark Coach</title>
+    <meta name="description" content="Carnet de musculation personnel, hors connexion." />
+
+    <!-- Réglages spécifiques à l'iPhone quand l'app est ajoutée à l'écran d'accueil -->
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="FitPark" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="theme-color" content="#0e0f0c" />
+    <meta name="format-detection" content="telephone=no" />
+
+    <link rel="icon" href="favicon.ico" sizes="48x48" />
+    <link rel="icon" href="icon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="apple-touch-icon-180x180.png" />
+
+    <script>
+      // Applique le thème mémorisé avant l'affichage, pour éviter un flash blanc.
+      try {
+        var t = localStorage.getItem('fitpark-theme');
+        if (t) document.documentElement.setAttribute('data-theme', t);
+      } catch (e) {}
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

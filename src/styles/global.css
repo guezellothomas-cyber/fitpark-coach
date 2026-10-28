@@ -1,0 +1,326 @@
+/*
+ * Feuille de style globale.
+ * Les couleurs sont des "variables" (--nom) définies une fois par thème :
+ * changer de thème revient à changer ces valeurs, le reste suit.
+ */
+
+/* ---------- Thème sombre (par défaut) ---------- */
+:root,
+[data-theme='sombre'] {
+  color-scheme: dark;
+  --fond: #0e0f0c;
+  --surface: #171914;
+  --surface-2: #20231c;
+  --surface-3: #2a2e25;
+  --trait: rgba(236, 240, 222, 0.08);
+  --texte: #eef0e6;
+  --texte-2: #a3a797;
+  --texte-3: #6d7163;
+  /* Couleur d'accent unique : vert citron, très lisible sur fond sombre */
+  --accent: #c8f135;
+  --accent-texte: #c8f135; /* accent utilisé comme couleur de texte */
+  --sur-accent: #12160a; /* texte posé sur un fond accent */
+  --accent-doux: rgba(200, 241, 53, 0.12);
+  --danger: #ff7a66;
+  --ombre: 0 10px 30px rgba(0, 0, 0, 0.45);
+}
+
+/* ---------- Thème clair ---------- */
+[data-theme='clair'] {
+  color-scheme: light;
+  --fond: #f3f3ee;
+  --surface: #ffffff;
+  --surface-2: #ebece4;
+  --surface-3: #dfe1d6;
+  --trait: rgba(20, 24, 12, 0.09);
+  --texte: #15170f;
+  --texte-2: #5b5f50;
+  --texte-3: #8c9081;
+  --accent: #c8f135;
+  --accent-texte: #4d6a00; /* le citron est illisible en texte sur blanc : version foncée */
+  --sur-accent: #12160a;
+  --accent-doux: rgba(120, 160, 0, 0.13);
+  --danger: #c8381f;
+  --ombre: 0 10px 30px rgba(30, 35, 20, 0.12);
+}
+
+/* ---------- Typographie ---------- */
+:root {
+  --police: 'Barlow', system-ui, -apple-system, sans-serif;
+  --police-titre: 'Barlow Condensed', 'Barlow', system-ui, sans-serif;
+  --rayon: 18px;
+  --rayon-petit: 12px;
+  --tactile: 52px; /* hauteur minimale d'une zone tactile (> 48 px demandé) */
+  --barre-onglets: 64px;
+  --haut-sur: env(safe-area-inset-top, 0px);
+  --bas-sur: env(safe-area-inset-bottom, 0px);
+  --gauche-sur: env(safe-area-inset-left, 0px);
+  --droite-sur: env(safe-area-inset-right, 0px);
+  --ease: cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  background: var(--fond);
+  color: var(--texte);
+  font-family: var(--police);
+  font-size: 17px;
+  line-height: 1.4;
+  -webkit-font-smoothing: antialiased;
+  -webkit-text-size-adjust: 100%;
+  -webkit-tap-highlight-color: transparent;
+  /* Supprime le zoom par double tape (gênant entre deux séries) */
+  touch-action: manipulation;
+  overscroll-behavior: none;
+  transition: background-color 0.25s ease;
+}
+
+button,
+input,
+select {
+  font: inherit;
+  color: inherit;
+}
+
+button {
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+/* Les champs de saisie en 16 px minimum : sinon Safari zoome à la saisie */
+input,
+select {
+  font-size: max(16px, 1em);
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.chiffres {
+  font-family: var(--police-titre);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.01em;
+}
+
+/* ---------- Structure de l'app ---------- */
+.app {
+  display: flex;
+  flex-direction: column;
+  height: 100dvh;
+  overflow: hidden;
+}
+
+.ecran {
+  flex: 1;
+  overflow-y: auto;
+  overscroll-behavior-y: contain;
+  -webkit-overflow-scrolling: touch;
+  /* Marge du haut = zone de la Dynamic Island + respiration */
+  padding: calc(var(--haut-sur) + 14px) calc(var(--droite-sur) + 18px) 28px
+    calc(var(--gauche-sur) + 18px);
+  animation: entree-ecran 0.28s var(--ease);
+}
+
+@keyframes entree-ecran {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+}
+
+.entete {
+  margin: 6px 0 22px;
+}
+
+.entete .surtitre {
+  color: var(--accent-texte);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin: 0 0 2px;
+}
+
+.entete h1 {
+  font-family: var(--police-titre);
+  font-weight: 700;
+  font-size: 40px;
+  line-height: 1;
+  letter-spacing: -0.01em;
+  margin: 0;
+}
+
+.section {
+  margin: 0 0 26px;
+}
+
+.section > h2 {
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--texte-3);
+  margin: 0 4px 8px;
+}
+
+.carte {
+  background: var(--surface);
+  border-radius: var(--rayon);
+  border: 1px solid var(--trait);
+}
+
+/* Liste de lignes de réglage dans une carte */
+.ligne {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 60px;
+  padding: 10px 16px;
+}
+
+.ligne + .ligne {
+  border-top: 1px solid var(--trait);
+}
+
+.ligne .libelle {
+  flex: 1;
+  min-width: 0;
+}
+
+.ligne .libelle small {
+  display: block;
+  color: var(--texte-2);
+  font-size: 14px;
+  line-height: 1.3;
+  margin-top: 2px;
+}
+
+/* Ligne sur deux niveaux : le texte en haut, la commande en dessous, à droite */
+.ligne.empilee {
+  flex-wrap: wrap;
+  padding-block: 14px;
+}
+
+.ligne.empilee .libelle {
+  flex-basis: 100%;
+}
+
+.ligne.empilee > :last-child {
+  margin-left: auto;
+}
+
+.deux-boutons {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  width: 100%;
+}
+
+.note {
+  color: var(--texte-2);
+  font-size: 14px;
+  margin: 8px 4px 0;
+}
+
+/* ---------- Boutons ---------- */
+.bouton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  min-height: var(--tactile);
+  padding: 0 22px;
+  border-radius: 999px;
+  border: none;
+  background: var(--surface-2);
+  font-weight: 600;
+  font-size: 17px;
+  cursor: pointer;
+  transition:
+    transform 0.12s var(--ease),
+    background-color 0.2s ease,
+    opacity 0.2s ease;
+}
+
+.bouton:active {
+  transform: scale(0.97);
+}
+
+.bouton:disabled {
+  opacity: 0.4;
+}
+
+.bouton.principal {
+  background: var(--accent);
+  color: var(--sur-accent);
+}
+
+.bouton.danger {
+  color: var(--danger);
+}
+
+.bouton.large {
+  width: 100%;
+  min-height: 60px;
+  font-size: 19px;
+}
+
+/* ---------- Écran vide (fonctionnalité à venir, liste vide…) ---------- */
+.vide {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 26px 22px;
+}
+
+.vide svg {
+  color: var(--accent-texte);
+}
+
+.vide h3 {
+  font-family: var(--police-titre);
+  font-size: 26px;
+  font-weight: 700;
+  line-height: 1.05;
+  margin: 4px 0 0;
+}
+
+.vide p {
+  color: var(--texte-2);
+  margin: 0;
+}
+
+.etiquette {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 999px;
+  background: var(--accent-doux);
+  color: var(--accent-texte);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+/* Réduire les animations si l'iPhone le demande (Accessibilité > Mouvement) */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}

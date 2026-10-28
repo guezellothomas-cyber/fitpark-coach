@@ -1,0 +1,123 @@
+/**
+ * Icônes dessinées pour l'app (traits de 2 px sur une grille de 24).
+ * Elles prennent la couleur du texte autour (currentColor).
+ */
+import type { SVGProps } from 'react';
+
+type Props = SVGProps<SVGSVGElement> & { taille?: number };
+
+function Svg({ taille = 26, children, ...reste }: Props) {
+  return (
+    <svg
+      width={taille}
+      height={taille}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={2}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+      {...reste}
+    >
+      {children}
+    </svg>
+  );
+}
+
+/** Aujourd'hui : un éclair dans un cercle (la séance du jour). */
+export function IconeAujourdhui(p: Props) {
+  return (
+    <Svg {...p}>
+      <circle cx="12" cy="12" r="9" />
+      <path d="M13 6.5 9.5 12.5h4L11 17.5" />
+    </Svg>
+  );
+}
+
+/** Séances : une liste d'exercices. */
+export function IconeSeances(p: Props) {
+  return (
+    <Svg {...p}>
+      <rect x="4" y="3.5" width="16" height="17" rx="3" />
+      <path d="M8 9h8M8 13h8M8 17h4" />
+    </Svg>
+  );
+}
+
+/** Exercices : un haltère. */
+export function IconeExercices(p: Props) {
+  return (
+    <Svg {...p}>
+      <path d="M8 12h8" />
+      <rect x="4.5" y="7" width="3.5" height="10" rx="1.2" />
+      <rect x="16" y="7" width="3.5" height="10" rx="1.2" />
+      <path d="M2.5 10v4M21.5 10v4" />
+    </Svg>
+  );
+}
+
+/** Progrès : une courbe qui monte. */
+export function IconeProgres(p: Props) {
+  return (
+    <Svg {...p}>
+      <path d="M3.5 19.5h17" />
+      <path d="m4.5 15 4.5-4.5 3.5 3 7-7" />
+      <path d="M15 6.5h4.5V11" />
+    </Svg>
+  );
+}
+
+/** Réglages : deux curseurs. */
+export function IconeReglages(p: Props) {
+  return (
+    <Svg {...p}>
+      <path d="M4 8h9M17 8h3M4 16h3M11 16h9" />
+      <circle cx="15" cy="8" r="2.2" />
+      <circle cx="9" cy="16" r="2.2" />
+    </Svg>
+  );
+}
+
+export function IconePlus(p: Props) {
+  return (
+    <Svg {...p}>
+      <path d="M12 5v14M5 12h14" />
+    </Svg>
+  );
+}
+
+export function IconeMoins(p: Props) {
+  return (
+    <Svg {...p}>
+      <path d="M5 12h14" />
+    </Svg>
+  );
+}
+
+export function IconeExporter(p: Props) {
+  return (
+    <Svg {...p}>
+      <path d="M12 15V4M8 8l4-4 4 4" />
+      <path d="M5 13v5a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-5" />
+    </Svg>
+  );
+}
+
+export function IconeImporter(p: Props) {
+  return (
+    <Svg {...p}>
+      <path d="M12 4v11M8 11l4 4 4-4" />
+      <path d="M5 13v5a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-5" />
+    </Svg>
+  );
+}
+
+export function IconeChantier(p: Props) {
+  return (
+    <Svg {...p}>
+      <path d="M12 3.5 2.5 20h19z" />
+      <path d="M12 10v4M12 17v.01" />
+    </Svg>
+  );
+}
