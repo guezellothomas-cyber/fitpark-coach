@@ -71,6 +71,11 @@ describe('progression et records', () => {
     expect(p[1]).toMatchObject({ chargeMax: 62.5, volume: 60 * 8 + 62.5 * 6 });
   });
 
+  it('compte chaque série à sa propre charge sur une pyramide', () => {
+    const [p] = progressionExercice([entr(1, [s('ext', 25, 10), s('ext', 27.5, 8), s('ext', 27.5, 7)])], 'ext');
+    expect(p).toMatchObject({ chargeMax: 27.5, volume: 25 * 10 + 27.5 * 8 + 27.5 * 7, unRm: 34.8 });
+  });
+
   it('retient la série la plus lourde et le meilleur 1RM estimé', () => {
     const dc = recordsParExercice(historique).find((r) => r.exerciceId === 'dc')!;
     expect(dc.meilleure).toEqual({ charge: 62.5, reps: 6, date: 2000 });

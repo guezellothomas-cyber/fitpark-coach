@@ -28,14 +28,22 @@ export interface DispoSalle {
   disponible: boolean;
 }
 
+/** Ce qui est prévu pour une série : sa charge en kg et son objectif de reps (ou de secondes). */
+export interface SeriePrevue {
+  charge: number;
+  reps: number;
+}
+
 /** Un exercice prévu dans une séance type. */
 export interface ExerciceDeSeance {
   exerciceId: string;
-  series: number;
+  /** Une entrée par série, dans l'ordre : leur nombre est le nombre de séries. */
+  prevues: SeriePrevue[];
+  /** Interrupteur "Même charge pour toutes les séries". */
+  memeCharge: boolean;
+  /** Fourchette de reps de l'exercice : sert à la surcharge progressive. */
   repsMin: number;
   repsMax: number;
-  /** Charge de départ en kg. */
-  charge: number;
   /** Repos après chaque série, en secondes. */
   repos: number;
   /** Vrai si cet exercice s'enchaîne en superset avec le suivant. */

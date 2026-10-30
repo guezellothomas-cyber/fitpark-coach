@@ -1,4 +1,5 @@
 import Dexie, { type EntityTable } from 'dexie';
+import { migrerEntrainement, migrerSeance } from './migration';
 import type { DispoSalle, Entrainement, Mesure, Reglages, Seance } from './types';
 
 /**
@@ -15,13 +16,26 @@ class FitParkDB extends Dexie {
 
   constructor() {
     super('fitpark-coach');
-    this.version(1).stores({
+    const tables = {
       reglages: 'id',
       salle: 'exerciceId',
       seances: 'id, *jours',
       entrainements: 'id, debut, seanceId',
       mesures: 'id, date',
-    });
+    };
+    this.version(1).stores(tables);
+    // Version 2 : une charge par série. La conversion se fait en une seule transaction
+    // à la première ouverture : soit tout est converti, soit rien ne change.
+    this.version(2)
+      .stores(tables)
+      .upgrade(async (tx) => {
+        await tx.table('seances').toCollection().modify((s, ref) => {
+          ref.value = migrerSeance(s);
+        });
+        await tx.table('entrainements').toCollection().modify((e, ref) => {
+          ref.value = migrerEntrainement(e);
+        });
+      });
   }
 }
 

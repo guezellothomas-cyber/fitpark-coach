@@ -14,6 +14,8 @@ interface Props {
   libelle: string;
   /** Version géante pour l'écran de séance (chiffres très lisibles, boutons plus gros). */
   grande?: boolean;
+  /** Version resserrée pour mettre deux réglettes côte à côte (séries d'un exercice). */
+  compacte?: boolean;
 }
 
 /**
@@ -30,6 +32,7 @@ export function Reglette({
   formater = formatNombre,
   libelle,
   grande = false,
+  compacte = false,
 }: Props) {
   // Arrondi pour éviter les erreurs de calcul du type 0,1 + 0,2 = 0,30000000000000004
   const arrondir = (v: number) => Math.round(v * 100) / 100;
@@ -42,7 +45,7 @@ export function Reglette({
   };
 
   return (
-    <div className={`reglette${grande ? ' grande' : ''}`} role="group" aria-label={libelle}>
+    <div className={`reglette${grande ? ' grande' : ''}${compacte ? ' compacte' : ''}`} role="group" aria-label={libelle}>
       <button
         type="button"
         className="reglette-bouton"

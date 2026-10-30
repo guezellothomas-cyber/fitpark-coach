@@ -176,13 +176,13 @@
 .seance-progression {
   display: flex;
   gap: 4px;
-  margin-bottom: 8px;
+  margin: -10px 0 -2px;
 }
 
 .pastille {
   flex: 1;
-  height: 28px;
-  padding: 11px 0;
+  height: var(--min-tactile);
+  padding: 21px 0;
   border: none;
   background: none;
   cursor: pointer;
@@ -295,7 +295,7 @@
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  min-height: 40px;
+  min-height: var(--min-tactile);
   padding: 0 14px 0 10px;
   border: none;
   border-radius: 999px;

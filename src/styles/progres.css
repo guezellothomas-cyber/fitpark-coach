@@ -223,7 +223,7 @@
 }
 
 .courbe-tableau summary {
-  min-height: 40px;
+  min-height: var(--min-tactile);
   display: flex;
   align-items: center;
   cursor: pointer;
@@ -255,7 +255,7 @@
 }
 
 .case-mesure {
-  min-height: 44px;
+  min-height: var(--min-tactile);
   padding: 0 12px 0 0;
   border: none;
   background: none;

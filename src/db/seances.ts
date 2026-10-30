@@ -2,8 +2,9 @@ import { useLiveQuery } from 'dexie-react-hooks';
 import { exerciceParId } from '../data/exercices';
 import { libelleMuscle } from '../data/muscles';
 import { inserer } from '../lib/ordre';
+import { creerPrevues } from '../lib/seriesPrevues';
 import { db } from './db';
-import type { ExerciceDeSeance, Reglages, Seance } from './types';
+import type { ExerciceDeSeance, Reglages, Seance, SeriePrevue } from './types';
 
 /** Toutes les séances, triées par premier jour de la semaine puis par nom. */
 export function useSeances(): Seance[] | undefined {
@@ -41,15 +42,19 @@ export async function supprimerSeance(id: string): Promise<void> {
   await db.seances.delete(id);
 }
 
-/** Charge la plus lourde de la dernière séance faite sur cet exercice (0 si jamais fait). */
-async function derniereCharge(exerciceId: string): Promise<number> {
+/**
+ * Reprend les charges de la dernière séance faite sur cet exercice, série par série.
+ * Au-delà des séries faites la dernière fois, on garde la dernière charge connue.
+ */
+async function avecDernieresCharges(prevues: readonly SeriePrevue[], exerciceId: string) {
   const dernier = await db.entrainements
     .orderBy('debut')
     .reverse()
     .filter((e) => e.series.some((s) => s.exerciceId === exerciceId && !s.echauffement))
     .first();
   const series = dernier?.series.filter((s) => s.exerciceId === exerciceId && !s.echauffement) ?? [];
-  return series.reduce((max, s) => Math.max(max, s.charge), 0);
+  const nouvelles = prevues.map((p, i) => ({ ...p, charge: (series[i] ?? series.at(-1))?.charge ?? p.charge }));
+  return { prevues: nouvelles, memeCharge: nouvelles.every((p) => p.charge === nouvelles[0]?.charge) };
 }
 
 /**
@@ -67,7 +72,7 @@ export async function creerProgramme(
   const completes: Seance[] = [];
   for (const [i, s] of seances.entries()) {
     const exercices: ExerciceDeSeance[] = [];
-    for (const e of s.exercices) exercices.push({ ...e, charge: await derniereCharge(e.exerciceId) });
+    for (const e of s.exercices) exercices.push({ ...e, ...(await avecDernieresCharges(e.prevues, e.exerciceId)) });
     completes.push({
       id: crypto.randomUUID(),
       nom: s.nom,
@@ -93,12 +98,12 @@ export async function ajouterExercice(seance: Seance, exerciceId: string, reglag
   const e = exerciceParId(exerciceId);
   const poly = e?.mouvement.articulation === 'polyarticulaire';
   const secondes = e?.mesure === 'secondes';
+  const repsMax = secondes ? 45 : poly ? 10 : 12;
   const nouveau: ExerciceDeSeance = {
     exerciceId,
-    series: 3,
+    ...(await avecDernieresCharges(creerPrevues(3, 0, repsMax), exerciceId)),
     repsMin: secondes ? 30 : poly ? 8 : 10,
-    repsMax: secondes ? 45 : poly ? 10 : 12,
-    charge: await derniereCharge(exerciceId),
+    repsMax,
     repos: reglages.reposParDefaut,
     supersetAvecSuivant: false,
   };

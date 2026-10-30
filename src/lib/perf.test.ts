@@ -7,14 +7,14 @@ describe('resumerSeries', () => {
     expect(resumerSeries(s)).toBe('60 kg × 8, 8, 7');
   });
 
-  it('sépare les charges différentes', () => {
+  it('détaille chaque série quand les charges diffèrent', () => {
     expect(
       resumerSeries([
-        { charge: 60, reps: 8 },
-        { charge: 62.5, reps: 6 },
-        { charge: 62.5, reps: 5 },
+        { charge: 25, reps: 10 },
+        { charge: 27.5, reps: 8 },
+        { charge: 27.5, reps: 7 },
       ]),
-    ).toBe('60 kg × 8 · 62,5 kg × 6, 5');
+    ).toBe('25 kg × 10, 27,5 kg × 8, 27,5 kg × 7');
   });
 
   it('affiche seulement les reps au poids du corps', () => {

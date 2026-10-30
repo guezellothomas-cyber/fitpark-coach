@@ -94,7 +94,7 @@ export function Aujourdhui() {
                 <li key={e.exerciceId}>
                   <span>{exerciceParId(e.exerciceId)?.nom}</span>
                   <span className="chiffres">
-                    {resumerObjectif(e.series, e.repsMin, e.repsMax, enSecondes(e.exerciceId))}
+                    {resumerObjectif(e.prevues.length, e.repsMin, e.repsMax, enSecondes(e.exerciceId))}
                   </span>
                 </li>
               ))}

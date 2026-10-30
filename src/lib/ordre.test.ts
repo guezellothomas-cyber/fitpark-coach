@@ -1,13 +1,14 @@
 import { describe, expect, it } from 'vitest';
 import type { ExerciceDeSeance } from '../db/types';
 import { inserer, ordonner } from './ordre';
+import { creerPrevues } from './seriesPrevues';
 
 const item = (exerciceId: string, supersetAvecSuivant = false): ExerciceDeSeance => ({
   exerciceId,
-  series: 3,
+  prevues: creerPrevues(3, 0, 10),
+  memeCharge: true,
   repsMin: 8,
   repsMax: 10,
-  charge: 0,
   repos: 90,
   supersetAvecSuivant,
 });

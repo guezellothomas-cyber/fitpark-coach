@@ -5,9 +5,15 @@
   position: sticky;
   bottom: 0;
   z-index: 5;
-  margin: auto -18px -28px;
+  /* Pas de marge négative en bas : un élément collé garde sa marge, et la liste réapparaîtrait
+     sous le bouton. La marge basse de l'écran est retirée juste en dessous. */
+  margin: auto -18px 0;
   padding: 18px 18px 14px;
   background: linear-gradient(to bottom, transparent, var(--fond) 34%);
+}
+
+.ecran:has(> .actions-bas) {
+  padding-bottom: 0;
 }
 
 .actions-bas-deux {
@@ -295,7 +301,7 @@
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  min-height: 40px;
+  min-height: var(--min-tactile);
   padding: 0 4px;
   border: none;
   background: none;
@@ -399,7 +405,7 @@
   align-items: center;
   gap: 6px;
   margin: 0 auto;
-  min-height: 34px;
+  min-height: var(--min-tactile);
   padding: 0 12px;
   border: none;
   border-radius: 999px;
@@ -464,6 +470,48 @@
 
 .ligne-reglage + .ligne-reglage {
   border-top: 1px solid var(--trait);
+}
+
+/* Détail des séries : numéro, charge, objectif */
+.series-prevues {
+  display: grid;
+  gap: 6px;
+  margin: 0 0 12px;
+}
+
+.serie-prevue {
+  display: grid;
+  grid-template-columns: 16px minmax(0, 1fr) minmax(0, 1fr);
+  align-items: center;
+  gap: 6px;
+}
+
+.entete-series {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  text-align: center;
+  color: var(--texte-3);
+}
+
+.serie-numero {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--accent-texte);
+}
+
+.bouton-pyramide {
+  margin-bottom: 8px;
+}
+
+.pyramide {
+  padding: 4px 12px 12px;
+  margin-bottom: 8px;
+}
+
+.pyramide .reglages-exercice {
+  margin: 0 0 8px;
 }
 
 a.bouton {

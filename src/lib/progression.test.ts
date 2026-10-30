@@ -1,35 +1,62 @@
 import { describe, expect, it } from 'vitest';
-import type { SerieFaite } from '../db/types';
-import { arrondirCharge, proposerSurcharge, seriesEchauffement } from './progression';
+import type { ExerciceDeSeance, SerieFaite } from '../db/types';
+import { arrondirCharge, proposerSerie, proposerSurcharge, seriesEchauffement } from './progression';
 
 const s = (charge: number, reps: number, echauffement = false): SerieFaite => ({
   exerciceId: 'dc', charge, reps, faiteLe: 0, echauffement,
 });
-const objectif = { series: 3, repsMax: 10 };
+describe('surcharge progressive, série par série', () => {
+  const pyramide = [s(25, 10), s(27.5, 8), s(27.5, 7)];
 
-describe('surcharge progressive', () => {
-  it('propose +2,5 kg quand toutes les séries ont atteint le haut de la fourchette', () => {
-    expect(proposerSurcharge([s(60, 10), s(60, 10), s(60, 11)], objectif, 2.5)).toEqual({ charge: 62.5, avant: 60 });
+  it('propose un pas de plus sur la série qui a atteint le haut de la fourchette', () => {
+    expect(proposerSurcharge(pyramide, 0, 10, 2.5)).toEqual({ charge: 27.5, avant: 25 });
   });
 
-  it('ne propose rien si une série est en dessous', () => {
-    expect(proposerSurcharge([s(60, 10), s(60, 10), s(60, 8)], objectif, 2.5)).toBeNull();
+  it('ne propose rien sur les séries en dessous du haut de la fourchette', () => {
+    expect(proposerSurcharge(pyramide, 1, 10, 2.5)).toBeNull();
+    expect(proposerSurcharge(pyramide, 2, 10, 2.5)).toBeNull();
   });
 
-  it('ne propose rien s’il manquait des séries', () => {
-    expect(proposerSurcharge([s(60, 10), s(60, 10)], objectif, 2.5)).toBeNull();
+  it('ne propose rien pour une série non faite la dernière fois', () => {
+    expect(proposerSurcharge(pyramide, 3, 10, 2.5)).toBeNull();
   });
 
   it('ignore les séries d’échauffement', () => {
-    expect(proposerSurcharge([s(30, 5, true), s(60, 10), s(60, 10), s(60, 10)], objectif, 2.5)?.charge).toBe(62.5);
+    expect(proposerSurcharge([s(30, 5, true), s(60, 10)], 0, 10, 2.5)?.charge).toBe(62.5);
   });
 
   it('ne propose rien au poids du corps', () => {
-    expect(proposerSurcharge([s(0, 12), s(0, 12), s(0, 12)], objectif, 2.5)).toBeNull();
+    expect(proposerSurcharge([s(0, 12)], 0, 10, 2.5)).toBeNull();
   });
 
   it('respecte le pas réglé', () => {
-    expect(proposerSurcharge([s(14, 12), s(14, 12), s(14, 12)], { series: 3, repsMax: 12 }, 1)?.charge).toBe(15);
+    expect(proposerSurcharge([s(14, 12)], 0, 12, 1)?.charge).toBe(15);
+  });
+});
+
+describe('pré-remplissage d’une série', () => {
+  const item: ExerciceDeSeance = {
+    exerciceId: 'dc',
+    prevues: [{ charge: 20, reps: 12 }, { charge: 22.5, reps: 10 }, { charge: 25, reps: 8 }],
+    memeCharge: false,
+    repsMin: 8,
+    repsMax: 12,
+    repos: 90,
+    supersetAvecSuivant: false,
+  };
+  const derniereFois = [s(25, 10), s(27.5, 8)];
+
+  it('reprend la MÊME série de la dernière fois, même si la série d’avant a changé aujourd’hui', () => {
+    expect(proposerSerie(item, [], derniereFois)).toEqual({ charge: 25, reps: 10 });
+    expect(proposerSerie(item, [s(30, 6)], derniereFois)).toEqual({ charge: 27.5, reps: 8 });
+  });
+
+  it('prend ce qui est prévu pour une série non faite la dernière fois', () => {
+    expect(proposerSerie(item, [s(25, 10), s(27.5, 8)], derniereFois)).toEqual({ charge: 25, reps: 8 });
+  });
+
+  it('prend la série précédente pour une série bonus', () => {
+    expect(proposerSerie(item, [s(25, 10), s(27.5, 8), s(30, 6)], derniereFois)).toEqual({ charge: 30, reps: 6 });
   });
 });
 

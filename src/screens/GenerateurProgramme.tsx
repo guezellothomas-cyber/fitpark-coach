@@ -149,7 +149,7 @@ export function GenerateurProgramme() {
                     <MiniatureExercice exerciceId={e.exerciceId} />
                     <span className="apercu-nom">{exerciceParId(e.exerciceId)?.nom}</span>
                     <span className="chiffres apercu-series">
-                      {resumerObjectif(e.series, e.repsMin, e.repsMax, enSecondes(e.exerciceId))}
+                      {resumerObjectif(e.prevues.length, e.repsMin, e.repsMax, enSecondes(e.exerciceId))}
                     </span>
                   </li>
                 ))}

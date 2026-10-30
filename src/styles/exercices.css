@@ -89,7 +89,7 @@
 
 .puce {
   flex: none;
-  min-height: 44px;
+  min-height: var(--min-tactile);
   padding: 0 16px;
   border-radius: 999px;
   border: 1px solid var(--trait);
@@ -390,7 +390,7 @@
   display: inline-flex;
   align-items: center;
   gap: 2px;
-  min-height: 44px;
+  min-height: var(--min-tactile);
   margin: -6px 0 4px -10px;
   padding: 0 12px 0 4px;
   border: none;

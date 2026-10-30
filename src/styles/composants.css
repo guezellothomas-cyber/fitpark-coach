@@ -97,6 +97,21 @@
   margin-left: 3px;
 }
 
+/* Version resserrée : deux réglettes tiennent côte à côte sur un iPhone */
+.reglette.compacte {
+  grid-template-columns: var(--min-tactile) minmax(0, 1fr) var(--min-tactile);
+  gap: 2px;
+}
+
+.reglette.compacte .reglette-bouton {
+  width: var(--min-tactile);
+  height: var(--min-tactile);
+}
+
+.reglette.compacte .reglette-valeur {
+  font-size: 21px;
+}
+
 /* ---------- Interrupteur ---------- */
 .interrupteur {
   position: relative;
@@ -163,7 +178,7 @@
 
 .segments-option {
   position: relative;
-  min-height: 46px;
+  min-height: var(--min-tactile);
   border: none;
   background: none;
   font-weight: 600;

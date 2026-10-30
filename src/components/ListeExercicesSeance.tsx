@@ -19,7 +19,8 @@ import { CSS } from '@dnd-kit/utilities';
 import { enSecondes, exerciceParId } from '../data/exercices';
 import { resumerObjectif } from '../lib/perf';
 import type { ExerciceDeSeance } from '../db/types';
-import { formatDuree, formatNombre } from '../lib/format';
+import { formatDuree } from '../lib/format';
+import { resumerCharges } from '../lib/seriesPrevues';
 import { IconeLien, IconePoignee } from './Icones';
 
 interface Props {
@@ -30,8 +31,9 @@ interface Props {
 
 /** "3 × 8-10 · 60 kg · 1:30" */
 function resume(e: ExerciceDeSeance): string {
-  const charge = e.charge > 0 ? ` · ${formatNombre(e.charge)} kg` : '';
-  return `${resumerObjectif(e.series, e.repsMin, e.repsMax, enSecondes(e.exerciceId))}${charge} · repos ${formatDuree(e.repos)}`;
+  const charges = resumerCharges(e.prevues);
+  const objectif = resumerObjectif(e.prevues.length, e.repsMin, e.repsMax, enSecondes(e.exerciceId));
+  return `${objectif}${charges ? ` · ${charges}` : ''} · repos ${formatDuree(e.repos)}`;
 }
 
 /**

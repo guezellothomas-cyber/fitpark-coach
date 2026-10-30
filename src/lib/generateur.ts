@@ -9,6 +9,7 @@ import type { ExerciceCatalogue, TypeExercice } from '../data/types';
 import type { ExerciceDeSeance } from '../db/types';
 import { estQuasiDoublon, suggerer } from './guide';
 import { ordonner } from './ordre';
+import { creerPrevues } from './seriesPrevues';
 
 type Candidat = ExerciceCatalogue & { disponibleDansMaSalle?: boolean };
 
@@ -197,13 +198,18 @@ export interface SeanceGeneree {
 const LIBRE: ReadonlySet<TypeExercice> = new Set(['libre', 'poids-du-corps']);
 
 /** Réglages par défaut : 1er polyarticulaire lourd, autres poly, isolation, abdos. */
-function parametres(e: ExerciceCatalogue, premier: boolean): Omit<ExerciceDeSeance, 'exerciceId' | 'charge' | 'supersetAvecSuivant'> {
-  if (e.mesure === 'secondes') return { series: 3, repsMin: 30, repsMax: 45, repos: 60 };
-  if (e.musclePrincipal === 'abdos') return { series: 3, repsMin: 12, repsMax: 15, repos: 60 };
-  if (e.mouvement.articulation === 'polyarticulaire') {
-    return premier ? { series: 4, repsMin: 6, repsMax: 8, repos: 150 } : { series: 3, repsMin: 8, repsMax: 10, repos: 120 };
-  }
-  return { series: 3, repsMin: 10, repsMax: 12, repos: 75 };
+function parametres(e: ExerciceCatalogue, premier: boolean): Omit<ExerciceDeSeance, 'exerciceId' | 'supersetAvecSuivant'> {
+  const regler = (series: number, repsMin: number, repsMax: number, repos: number) => ({
+    prevues: creerPrevues(series, 0, repsMax),
+    memeCharge: true,
+    repsMin,
+    repsMax,
+    repos,
+  });
+  if (e.mesure === 'secondes') return regler(3, 30, 45, 60);
+  if (e.musclePrincipal === 'abdos') return regler(3, 12, 15, 60);
+  if (e.mouvement.articulation === 'polyarticulaire') return premier ? regler(4, 6, 8, 150) : regler(3, 8, 10, 120);
+  return regler(3, 10, 12, 75);
 }
 
 function trierPar(cles: (c: Candidat) => boolean[]) {
@@ -290,7 +296,6 @@ function remplirSeance(modele: ModeleSeance, catalogue: readonly Candidat[], dej
   const muscles = [...new Set(modele.emplacements.map((e) => e.muscle))];
   const items: ExerciceDeSeance[] = choisis.map((e) => ({
     exerciceId: e.id,
-    charge: 0,
     supersetAvecSuivant: false,
     ...parametres(e, false),
   }));

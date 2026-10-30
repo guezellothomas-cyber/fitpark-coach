@@ -43,7 +43,7 @@ describe('générateur de programme', () => {
     for (const s of genererProgramme(REPARTITIONS[4]![0]!, EXERCICES)) {
       const premier = s.exercices[0]!;
       expect(ex(premier.exerciceId).mouvement.articulation, s.nom).toBe('polyarticulaire');
-      expect(premier.series, s.nom).toBe(4);
+      expect(premier.prevues, s.nom).toHaveLength(4);
     }
   });
 

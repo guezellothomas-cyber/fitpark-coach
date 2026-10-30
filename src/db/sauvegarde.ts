@@ -1,14 +1,20 @@
 import { db, TABLES, type NomTable } from './db';
+import { migrerDonnees } from './migration';
 
 /**
  * Sauvegarde complète des données dans un seul fichier JSON,
  * pour pouvoir tout restaurer si Safari est vidé ou si je change de téléphone.
+ * Format 2 : une charge par série. Le format 1 (charge unique) reste accepté à l'import.
  */
 export interface Sauvegarde {
   app: 'fitpark-coach';
-  format: 1;
+  format: 2;
   exporteLe: string;
   donnees: Record<NomTable, unknown[]>;
+}
+
+export function creerSauvegardeDepuis(donnees: Record<NomTable, unknown[]>): Sauvegarde {
+  return { app: 'fitpark-coach', format: 2, exporteLe: new Date().toISOString(), donnees };
 }
 
 /** Rassemble le contenu de toutes les tables. */
@@ -17,7 +23,7 @@ export async function creerSauvegarde(): Promise<Sauvegarde> {
   await db.transaction('r', TABLES.map((t) => db.table(t)), async () => {
     for (const t of TABLES) donnees[t] = await db.table(t).toArray();
   });
-  return { app: 'fitpark-coach', format: 1, exporteLe: new Date().toISOString(), donnees };
+  return creerSauvegardeDepuis(donnees);
 }
 
 /**
@@ -55,10 +61,10 @@ export async function exporterSauvegarde(): Promise<boolean> {
 }
 
 /** Vérifie qu'un objet lu dans un fichier a bien la forme d'une sauvegarde FitPark. */
-function estSauvegarde(x: unknown): x is Sauvegarde {
+function estSauvegarde(x: unknown): x is Omit<Sauvegarde, 'format'> & { format: 1 | 2 } {
   if (typeof x !== 'object' || x === null) return false;
-  const s = x as Partial<Sauvegarde>;
-  if (s.app !== 'fitpark-coach' || s.format !== 1) return false;
+  const s = x as { app?: unknown; format?: unknown; donnees?: Partial<Record<NomTable, unknown>> | null };
+  if (s.app !== 'fitpark-coach' || (s.format !== 1 && s.format !== 2)) return false;
   if (typeof s.donnees !== 'object' || s.donnees === null) return false;
   return TABLES.every((t) => Array.isArray(s.donnees?.[t] ?? []));
 }
@@ -74,7 +80,8 @@ export async function lireSauvegarde(fichier: File): Promise<Sauvegarde> {
   if (!estSauvegarde(contenu)) {
     throw new Error("Ce fichier n'est pas une sauvegarde FitPark Coach.");
   }
-  return contenu;
+  // Un ancien fichier est converti ici : le reste de l'app ne voit que le format actuel.
+  return { ...contenu, format: 2, donnees: migrerDonnees(contenu.donnees) };
 }
 
 /** Remplace toutes les données actuelles par celles de la sauvegarde (tout ou rien). */

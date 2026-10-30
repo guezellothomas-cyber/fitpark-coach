@@ -76,7 +76,8 @@
   --police-titre: 'Barlow Condensed', 'Barlow', system-ui, sans-serif;
   --rayon: 18px;
   --rayon-petit: 12px;
-  --tactile: 52px; /* hauteur minimale d'une zone tactile (> 48 px demandé) */
+  --tactile: 52px; /* hauteur des boutons principaux */
+  --min-tactile: 48px; /* plus petite zone tactile autorisée */
   --barre-onglets: 64px;
   --haut-sur: env(safe-area-inset-top, 0px);
   --bas-sur: env(safe-area-inset-bottom, 0px);

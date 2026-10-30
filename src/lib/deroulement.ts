@@ -15,7 +15,7 @@ export function seriesDe(series: readonly SerieFaite[], exerciceId: string): Ser
 /** Nombre de séries restantes pour l'exercice à la position `i` du plan. */
 export function restantes(plan: readonly ExerciceDeSeance[], series: readonly SerieFaite[], i: number): number {
   const p = plan[i];
-  return p ? Math.max(0, p.series - seriesDe(series, p.exerciceId).length) : 0;
+  return p ? Math.max(0, p.prevues.length - seriesDe(series, p.exerciceId).length) : 0;
 }
 
 /** Positions [début, fin] (incluses) du bloc superset qui contient l'exercice `i`. */

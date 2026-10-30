@@ -1,9 +1,10 @@
 import { describe, expect, it } from 'vitest';
 import type { ExerciceDeSeance, SerieFaite } from '../db/types';
 import { blocDe, etapeSuivante, restantes } from './deroulement';
+import { creerPrevues } from './seriesPrevues';
 
 const ex = (exerciceId: string, series = 3, supersetAvecSuivant = false, repos = 90): ExerciceDeSeance => ({
-  exerciceId, series, repsMin: 8, repsMax: 10, charge: 50, repos, supersetAvecSuivant,
+  exerciceId, prevues: creerPrevues(series, 50, 10), memeCharge: true, repsMin: 8, repsMax: 10, repos, supersetAvecSuivant,
 });
 const faite = (exerciceId: string, n = 1): SerieFaite[] =>
   Array.from({ length: n }, () => ({ exerciceId, charge: 50, reps: 8, faiteLe: 0, echauffement: false }));

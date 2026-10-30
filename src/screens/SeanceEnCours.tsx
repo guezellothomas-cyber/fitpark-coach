@@ -34,7 +34,7 @@ import {
 import { useReglages } from '../db/reglages';
 import { useExercices } from '../db/salle';
 import type { Entrainement, ExerciceDeSeance, SerieFaite } from '../db/types';
-import { proposerSurcharge, type Surcharge } from '../lib/progression';
+import { proposerSerie, proposerSurcharge, type Surcharge } from '../lib/progression';
 import { etapeSuivante, reposApres, restantes, seriesDe, blocDe } from '../lib/deroulement';
 import { formatNombre } from '../lib/format';
 import { resumerSeries } from '../lib/perf';
@@ -74,9 +74,8 @@ function Deroulement({ e, plan }: { e: Entrainement; plan: ExerciceDeSeance[] })
   const derniereFois = useDerniereFois(item.exerciceId, e.id);
   const toutFini = plan.every((_, i) => restantes(plan, e.series, i) === 0);
   const catalogue = useExercices();
-  // Surcharge progressive : proposée sur la première série de l'exercice.
-  const surcharge =
-    faites.length === 0 && derniereFois ? proposerSurcharge(derniereFois, item, reglages.pasCharge) : null;
+  // Surcharge progressive : proposée série par série, d'après la même série la dernière fois.
+  const surcharge = derniereFois ? proposerSurcharge(derniereFois, faites.length, item.repsMax, reglages.pasCharge) : null;
 
   const [feuilleFin, setFeuilleFin] = useState(false);
   const [feuilleRemplacer, setFeuilleRemplacer] = useState(false);
@@ -157,16 +156,17 @@ function Deroulement({ e, plan }: { e: Entrainement; plan: ExerciceDeSeance[] })
 
       <nav className="seance-progression" aria-label="Exercices de la séance">
         {plan.map((p, i) => {
-          const fait = p.series - restantes(plan, e.series, i);
+          const prevues = p.prevues.length;
+          const fait = prevues - restantes(plan, e.series, i);
           return (
             <button
               key={p.exerciceId}
               type="button"
-              className={`pastille${i === index ? ' courante' : ''}${fait >= p.series ? ' finie' : ''}`}
+              className={`pastille${i === index ? ' courante' : ''}${fait >= prevues ? ' finie' : ''}`}
               onClick={() => void allerA(e.id, i)}
-              aria-label={`${exerciceParId(p.exerciceId)?.nom} : ${fait} série(s) sur ${p.series}`}
+              aria-label={`${exerciceParId(p.exerciceId)?.nom} : ${fait} série(s) sur ${prevues}`}
             >
-              <span style={{ width: `${(fait / p.series) * 100}%` }} />
+              <span style={{ width: `${(fait / prevues) * 100}%` }} />
             </button>
           );
         })}
@@ -188,13 +188,13 @@ function Deroulement({ e, plan }: { e: Entrainement; plan: ExerciceDeSeance[] })
         <h1 className="seance-titre">{exercice?.nom ?? item.exerciceId}</h1>
         {partenaires.length > 0 && <p className="seance-superset">Enchaîné avec {partenaires.join(', ')}</p>}
         <p className="seance-objectif">
-          {numero > item.series ? (
+          {numero > item.prevues.length ? (
             <>
               Série bonus <strong className="chiffres">{numero}</strong>
             </>
           ) : (
             <>
-              Série <strong className="chiffres">{numero}</strong> sur {item.series}
+              Série <strong className="chiffres">{numero}</strong> sur {item.prevues.length}
             </>
           )}{' '}
           · objectif {item.repsMin === item.repsMax ? item.repsMin : `${item.repsMin}-${item.repsMax}`}{' '}
@@ -234,7 +234,7 @@ function Deroulement({ e, plan }: { e: Entrainement; plan: ExerciceDeSeance[] })
         <Saisie
           key={`${index}-${item.exerciceId}-${numero}`}
           item={item}
-          proposition={proposer(item, faites, derniereFois)}
+          proposition={proposerSerie(item, faites, derniereFois)}
           pas={reglages.pasCharge}
           secondes={secondes}
           poidsDuCorps={exercice?.type === 'poids-du-corps'}
@@ -327,22 +327,6 @@ function Deroulement({ e, plan }: { e: Entrainement; plan: ExerciceDeSeance[] })
       />
     </div>
   );
-}
-
-/**
- * Valeurs proposées pour la série à venir :
- * charge = celle de la série précédente de cette séance, sinon celle de la dernière fois,
- * sinon la charge de départ prévue ; reps = celles de la même série la dernière fois,
- * sinon le haut de la fourchette.
- */
-function proposer(item: ExerciceDeSeance, faites: SerieFaite[], derniereFois: SerieFaite[]) {
-  const rang = faites.length;
-  const precedente = faites.at(-1);
-  const memeSerie = derniereFois[rang] ?? derniereFois.at(-1);
-  return {
-    charge: precedente?.charge ?? memeSerie?.charge ?? item.charge,
-    reps: memeSerie?.reps ?? precedente?.reps ?? item.repsMax,
-  };
 }
 
 interface PropsSaisie {
