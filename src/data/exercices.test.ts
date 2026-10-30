@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { EXERCICES, REFERENCES } from './exercices';
-import { MUSCLES, ZONES, type MuscleId } from './muscles';
+import { MUSCLES, ZONES } from './muscles';
 
 /** Vérifie que le catalogue est cohérent (pas de doublon, zones valides, consignes présentes). */
 describe('catalogue des exercices', () => {
@@ -37,10 +37,28 @@ describe('catalogue des exercices', () => {
   });
 
   it('couvre chaque muscle travaillé avec au moins 2 exercices', () => {
-    const principaux = MUSCLES.map((m) => m.id).filter((m) => m !== 'avant-bras');
-    for (const m of principaux) {
-      const n = EXERCICES.filter((e) => e.musclePrincipal === (m as MuscleId)).length;
+    for (const { id: m } of MUSCLES) {
+      const n = EXERCICES.filter((e) => e.musclePrincipal === m).length;
       expect(n, m).toBeGreaterThanOrEqual(2);
+    }
+  });
+
+  it('propose les 11 exercices d’avant-bras, sans machine dédiée, sur les trois zones', () => {
+    const avantBras = EXERCICES.filter((e) => e.musclePrincipal === 'avant-bras');
+    expect(avantBras).toHaveLength(11);
+    expect(new Set(avantBras.map((e) => e.zone))).toEqual(new Set(['flechisseurs', 'extenseurs', 'brachio-radial']));
+    for (const e of avantBras) expect(e.type, e.id).not.toMatch(/^machine/);
+  });
+
+  it('sollicite les avant-bras en secondaire sur les exercices à prise forte', () => {
+    for (const id of ['curl-marteau', 'souleve-de-terre', 'tractions', 'rowing-barre', 'tirage-vertical']) {
+      expect(EXERCICES.find((e) => e.id === id)?.musclesSecondaires, id).toContain('avant-bras');
+    }
+  });
+
+  it('compte les exercices de maintien en secondes', () => {
+    for (const id of ['marche-fermier', 'suspension-barre', 'pince-disques']) {
+      expect(EXERCICES.find((e) => e.id === id)?.mesure, id).toBe('secondes');
     }
   });
 

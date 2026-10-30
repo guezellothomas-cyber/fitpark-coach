@@ -23,9 +23,12 @@ export interface Pose {
   G2?: Point;
   C2?: Point;
   O2?: Point;
+  /** Bout des doigts : seulement pour les gestes où le poignet bouge (M est alors le poignet). */
+  D?: Point;
+  D2?: Point;
 }
 
-export type PoseComplete = Required<Pose>;
+export type PoseComplete = Required<Omit<Pose, 'D' | 'D2'>> & Pick<Pose, 'D' | 'D2'>;
 export type Vue = 'profil' | 'face';
 
 /** Axe de symétrie du corps vu de face. */
@@ -50,6 +53,7 @@ export function completer(p: Pose, vue: Vue): PoseComplete {
       G2: p.G2 ?? plus(p.G, FOND),
       C2: p.C2 ?? plus(p.C, FOND),
       O2: p.O2 ?? (p.C2 ? plus(p.C2, [8, 0]) : plus(O, FOND)),
+      D2: p.D2 ?? (p.D ? plus(p.D, FOND) : undefined),
     };
   }
   const O = p.O ?? plus(p.C, [-5, 0]);
@@ -64,6 +68,7 @@ export function completer(p: Pose, vue: Vue): PoseComplete {
     G2: p.G2 ?? miroir(p.G),
     C2,
     O2: p.O2 ?? plus(C2, [5, 0]),
+    D2: p.D2 ?? (p.D ? miroir(p.D) : undefined),
   };
 }
 
@@ -82,6 +87,12 @@ export const SEGMENTS: readonly (readonly [keyof PoseComplete, keyof PoseComplet
   ['C2', 'G2'],
   ['O2', 'C2'],
 ];
+
+/** Mains : seulement quand le geste décrit le poignet. */
+const SEGMENTS_MAINS = [
+  ['D', 'M'],
+  ['D2', 'M2'],
+] as const;
 
 function polaire(de: Point, vers: Point) {
   const dx = vers[0] - de[0];
@@ -105,9 +116,12 @@ export function interpoler(A: PoseComplete, B: PoseComplete, t: number): PoseCom
     H: [melanger(A.H[0], B.H[0], t), melanger(A.H[1], B.H[1], t)],
     H2: [melanger(A.H2[0], B.H2[0], t), melanger(A.H2[1], B.H2[1], t)],
   };
-  for (const [enfant, parent] of SEGMENTS) {
-    const a = polaire(A[parent], A[enfant]);
-    const b = polaire(B[parent], B[enfant]);
+  for (const [enfant, parent] of [...SEGMENTS, ...SEGMENTS_MAINS]) {
+    const debut = A[enfant];
+    const fin = B[enfant];
+    if (!debut || !fin) continue;
+    const a = polaire(A[parent]!, debut);
+    const b = polaire(B[parent]!, fin);
     const angle = melangerAngle(a.angle, b.angle, t);
     const longueur = melanger(a.longueur, b.longueur, t);
     const p = r[parent]!;
@@ -125,7 +139,7 @@ export function tete(p: PoseComplete, vue: Vue): Point {
 
 /** Longueur d'un segment (utilisée par les tests de cohérence des poses). */
 export function longueur(p: PoseComplete, enfant: keyof PoseComplete, parent: keyof PoseComplete): number {
-  return polaire(p[parent], p[enfant]).longueur;
+  return polaire(p[parent]!, p[enfant]!).longueur;
 }
 
 /**

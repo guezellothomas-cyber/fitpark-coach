@@ -78,7 +78,7 @@ export function AnimationGeste({
   return (
     <svg
       ref={svg}
-      viewBox={`0 ${haut} 160 ${118 - haut}`}
+      viewBox={motif.cadre ? motif.cadre.join(' ') : `0 ${haut} 160 ${118 - haut}`}
       className={`geste ${className ?? ''}`}
       role="img"
       aria-label="Animation du mouvement"
@@ -104,7 +104,7 @@ export function AnimationGeste({
 function hautDuCadre(A: PoseComplete, B: PoseComplete, motif: Motif, materiel: Materiel): number {
   const ys: number[] = [];
   for (const p of [A, B]) {
-    for (const q of Object.values(p)) ys.push(q[1]);
+    for (const q of Object.values(p)) if (q) ys.push(q[1]);
     ys.push(tete(p, motif.vue)[1] - 8);
   }
   if (motif.ancre && (materiel === 'poulie' || materiel === 'poulie-cheville')) ys.push(motif.ancre[1]);
@@ -151,13 +151,13 @@ function Personnage({ pose: p, vue, fantome = false }: { pose: PoseComplete; vue
     <g className={cls}>
       {/* Membres du fond, plus sombres */}
       <g className="geste-loin">
-        <polyline points={pts(p.S2, p.E2, p.M2)} strokeWidth={5.5} />
+        <polyline points={pts(p.S2, p.E2, p.M2, ...(p.D2 ? [p.D2] : []))} strokeWidth={5.5} />
         <polyline points={pts(p.H2, p.G2, p.C2, p.O2)} strokeWidth={6.5} />
       </g>
       <polyline points={pts(p.H, p.G, p.C, p.O)} strokeWidth={7.5} />
       <line x1={p.H[0]} y1={p.H[1]} x2={p.S[0]} y2={p.S[1]} strokeWidth={11} />
       <circle cx={tx} cy={ty} r={6.5} className="geste-tete" />
-      <polyline points={pts(p.S, p.E, p.M)} strokeWidth={6} />
+      <polyline points={pts(p.S, p.E, p.M, ...(p.D ? [p.D] : []))} strokeWidth={6} />
     </g>
   );
 }
@@ -165,6 +165,9 @@ function Personnage({ pose: p, vue, fantome = false }: { pose: PoseComplete; vue
 function MaterielDessin({ materiel, pose: p, vue, ancre }: { materiel: Materiel; pose: PoseComplete; vue: Vue; ancre?: Point }) {
   const face = vue === 'face';
   const miroir = (q: Point): Point => [2 * AXE - q[0], q[1]];
+  // Quand le poignet bouge, la charge est dans la main (au bout des doigts), pas au poignet.
+  const main = p.D ?? p.M;
+  const main2 = p.D2 ?? p.M2;
   switch (materiel) {
     case 'barre':
     case 'smith':
@@ -178,21 +181,21 @@ function MaterielDessin({ materiel, pose: p, vue, ancre }: { materiel: Materiel;
           </g>
         );
       }
-      return <Disque c={p.M} r={9} />;
+      return <Disque c={main} r={9} />;
     case 'halteres':
       return (
         <g className="geste-materiel">
           {face ? (
             <>
-              <Haltere c={p.M} />
-              <Haltere c={p.M2} />
+              <Haltere c={main} />
+              <Haltere c={main2} />
             </>
           ) : (
             <>
               <g opacity={0.5}>
-                <Haltere c={p.M2} />
+                <Haltere c={main2} />
               </g>
-              <Haltere c={p.M} />
+              <Haltere c={main} />
             </>
           )}
         </g>
@@ -201,10 +204,10 @@ function MaterielDessin({ materiel, pose: p, vue, ancre }: { materiel: Materiel;
       if (!ancre) return null;
       return (
         <g className="geste-materiel">
-          <Cable de={p.M} vers={ancre} />
-          {face && <Cable de={p.M2} vers={miroir(ancre)} />}
-          <circle cx={p.M[0]} cy={p.M[1]} r={2.6} className="plein" />
-          {face && <circle cx={p.M2[0]} cy={p.M2[1]} r={2.6} className="plein" />}
+          <Cable de={main} vers={ancre} />
+          {face && <Cable de={main2} vers={miroir(ancre)} />}
+          <circle cx={main[0]} cy={main[1]} r={2.6} className="plein" />
+          {face && <circle cx={main2[0]} cy={main2[1]} r={2.6} className="plein" />}
         </g>
       );
     case 'poulie-cheville': {
@@ -267,6 +270,26 @@ function MaterielDessin({ materiel, pose: p, vue, ancre }: { materiel: Materiel;
       );
     case 'roue':
       return <Disque c={p.M} r={6.5} />;
+    case 'rouleau-poignets':
+      return (
+        <g className="geste-materiel">
+          <line x1={p.M[0]} y1={p.M[1]} x2={p.M[0]} y2={p.M[1] + 40} strokeWidth={1.2} />
+          <circle cx={p.M[0]} cy={p.M[1]} r={3.2} className="plein" />
+          <circle cx={p.M[0]} cy={p.M[1] + 45} r={6} />
+        </g>
+      );
+    case 'manche': {
+      const ux = main[0] - p.M[0];
+      const uy = main[1] - p.M[1];
+      const l = Math.hypot(ux, uy) || 1;
+      const bout: Point = [main[0] + (ux / l) * 8, main[1] + (uy / l) * 8];
+      return (
+        <g className="geste-materiel">
+          <line x1={main[0]} y1={main[1]} x2={bout[0]} y2={bout[1]} strokeWidth={3} />
+          <circle cx={bout[0]} cy={bout[1]} r={4.5} className="plein" />
+        </g>
+      );
+    }
     default:
       return null;
   }

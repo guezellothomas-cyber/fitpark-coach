@@ -10,13 +10,14 @@ Adresse : https://guezellothomas-cyber.github.io/fitpark-coach/
 - **Aujourd'hui** : la séance du jour, un gros bouton pour la lancer, la semaine en un coup d'œil.
 - **Séances** : création de séances (jours, muscles, exercices, supersets, glisser-déposer),
   suggestions du guide, ordre conseillé, et **générateur de programme** de 2 à 6 jours.
-- **Exercices** : 114 exercices classés par type de matériel, recherche, filtres, réglage
+- **Exercices** : 125 exercices classés par type de matériel, recherche, filtres, réglage
   « dans ma salle », fiche avec geste animé, silhouette des muscles travaillés et historique.
-- **Mode séance** : saisie charge / reps par boutons + et −, dernière performance, surcharge
-  progressive, échauffement calculé, remplacement d'exercice, chrono de repos (basé sur l'heure
-  de fin), option minuteur iPhone via un raccourci (Dynamic Island), résumé et records.
-- **Progrès** : carte du corps de la semaine, équilibre poussée / tirage, records et 1RM estimé,
-  courbes par exercice, poids de corps et mensurations.
+- **Mode séance** : une charge et des reps par série (ou la même partout), saisie par boutons
+  + et −, dernière performance, surcharge progressive, échauffement calculé, remplacement
+  d'exercice, chrono de repos (basé sur l'heure de fin), option minuteur iPhone via un raccourci
+  (Dynamic Island), résumé et records.
+- **Progrès** : carte du corps de la semaine (toucher un muscle ouvre ses exercices), équilibre
+  poussée / tirage, records et 1RM estimé, courbes par exercice, poids de corps et mensurations.
 - **Réglages** : thème sombre / clair / auto, pas de charge, repos, son, minuteur iPhone,
   sauvegarde et restauration en fichier JSON.
 

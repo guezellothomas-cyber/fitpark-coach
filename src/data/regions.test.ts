@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { EXERCICES, exerciceParId } from './exercices';
-import { meilleurCadrage, meilleureVue, regionsExercice } from './regions';
+import { REGIONS_DOS, REGIONS_FACE, meilleurCadrage, meilleureVue, muscleDeRegion, regionsExercice } from './regions';
 
 const carte = (id: string) => regionsExercice(exerciceParId(id)!);
 
@@ -31,6 +31,21 @@ describe('silhouette des exercices', () => {
     expect(c['delt-arriere']).toBe('fort');
     expect(c['delt-avant']).toBe('leger');
     expect(meilleureVue(c)).toBe('dos');
+  });
+
+  it('colorie la bonne zone de l’avant-bras', () => {
+    expect(carte('curl-poignets')['avant-bras-face']).toBe('fort');
+    expect(carte('curl-poignets')['avant-bras-dos']).toBe('leger');
+    expect(carte('extension-poignets-halteres')['avant-bras-dos']).toBe('fort');
+    expect(carte('curl-inverse-ez')['brachio-radial']).toBe('fort');
+    expect(meilleureVue(carte('extension-poignets-halteres'))).toBe('dos');
+  });
+
+  it('retrouve le muscle de chaque zone de la carte du corps', () => {
+    expect(muscleDeRegion('brachio-radial')).toBe('avant-bras');
+    expect(muscleDeRegion('avant-bras-dos')).toBe('avant-bras');
+    expect(muscleDeRegion('ischios')).toBe('ischios');
+    for (const r of [...REGIONS_FACE, ...REGIONS_DOS]) expect(muscleDeRegion(r), r).toBeTruthy();
   });
 
   it('cadre les miniatures sur les jambes ou sur le haut du corps', () => {

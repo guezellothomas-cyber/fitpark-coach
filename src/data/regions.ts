@@ -8,7 +8,7 @@ import type { ExerciceCatalogue } from './types';
 
 export const REGIONS_FACE = [
   'trap-face', 'delt-avant', 'pec-haut', 'pec-bas', 'biceps', 'avant-bras-face',
-  'abdos-droit', 'obliques', 'quadriceps', 'adducteurs', 'mollets-face',
+  'abdos-droit', 'obliques', 'quadriceps', 'adducteurs', 'mollets-face', 'brachio-radial',
 ] as const;
 
 export const REGIONS_DOS = [
@@ -29,7 +29,7 @@ export const REGIONS_DU_MUSCLE: Record<MuscleId, Region[]> = {
   trapezes: ['trap', 'trap-face'],
   biceps: ['biceps'],
   triceps: ['triceps'],
-  'avant-bras': ['avant-bras-face', 'avant-bras-dos'],
+  'avant-bras': ['avant-bras-face', 'avant-bras-dos', 'brachio-radial'],
   quadriceps: ['quadriceps'],
   ischios: ['ischios'],
   fessiers: ['fessiers'],
@@ -46,7 +46,18 @@ const ZONE_PRECISE: Partial<Record<MuscleId, Record<string, Region[]>>> = {
   pectoraux: { haut: ['pec-haut'], bas: ['pec-bas'] },
   epaules: { avant: ['delt-avant'], arriere: ['delt-arriere'] },
   abdos: { 'grand-droit': ['abdos-droit'], obliques: ['obliques'] },
+  'avant-bras': {
+    flechisseurs: ['avant-bras-face'],
+    extenseurs: ['avant-bras-dos'],
+    'brachio-radial': ['brachio-radial'],
+  },
 };
+
+/** Muscle dessiné par une zone de la silhouette (pour la carte du corps cliquable). */
+export function muscleDeRegion(region: Region): MuscleId {
+  const trouve = (Object.keys(REGIONS_DU_MUSCLE) as MuscleId[]).find((m) => REGIONS_DU_MUSCLE[m].includes(region));
+  return trouve ?? 'pectoraux';
+}
 
 /** Coloriage de la silhouette pour un exercice. */
 export function regionsExercice(e: ExerciceCatalogue): CarteRegions {

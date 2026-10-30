@@ -23,6 +23,8 @@ export interface Motif {
   ancre?: Point;
   /** Dessiner le sol (vrai par défaut). */
   sol?: boolean;
+  /** Zoom [x, y, largeur, hauteur] pour les petits gestes (poignets). */
+  cadre?: readonly [number, number, number, number];
 }
 
 export type Materiel =
@@ -38,6 +40,8 @@ export type Materiel =
   | 'hanches' // charge posée sur les hanches
   | 'genoux' // coussins contre les genoux
   | 'roue'
+  | 'rouleau-poignets' // corde et disque pendus sous les mains
+  | 'manche' // haltère tenu par une extrémité : il suit l'angle de la main
   | 'aucun';
 
 // ───────── Poses de base ─────────
@@ -284,6 +288,39 @@ export const MOTIFS = {
     vue: 'profil', decor: SIEGE_DOSSIER,
     A: { ...ASSIS, E: [50, 68], M: [64, 66] },
     B: { ...ASSIS, E: [61, 73], M: [63, 88] },
+  },
+
+  // ─── Avant-bras ───
+  'poignets-banc': {
+    vue: 'profil', cadre: [44, 40, 90, 72], ancre: [130, 110],
+    decor: [{ rect: [76, 82, 22, 4] }, { ligne: [90, 86, 90, 110], epaisseur: 3 }, { rect: [48, 91, 30, 5] }, { ligne: [62, 96, 62, 110], epaisseur: 3 }],
+    A: { H: [60, 88], S: [72, 58], E: [82, 75], M: [97, 78], G: [84, 90], C: [84, 110], O: [92, 110], D: [101, 85.5] },
+    B: { H: [60, 88], S: [72, 58], E: [82, 75], M: [97, 78], G: [84, 90], C: [84, 110], O: [92, 110], D: [104, 73.5] },
+  },
+  'rouleau-poignets': {
+    vue: 'profil',
+    A: { ...DEBOUT, E: [97, 30], M: [112, 30], D: [117, 37], D2: [113, 22] },
+    B: { ...DEBOUT, E: [97, 30], M: [112, 30], D: [118, 23], D2: [112, 35] },
+  },
+  'marche-fermier': {
+    vue: 'profil',
+    A: { ...DEBOUT, G: [88, 85], C: [90, 109], O: [98, 110], G2: [74, 85], C2: [68, 108], O2: [76, 110] },
+    B: { ...DEBOUT, G: [74, 85], C: [68, 108], O: [76, 110], G2: [88, 85], C2: [90, 109], O2: [98, 110] },
+  },
+  suspension: {
+    vue: 'profil', sol: false, decor: BARRE_FIXE,
+    A: { M: [80, 8], E: [80, 23], S: [80, 40], H: [80, 72], G: [81, 95], C: [78, 116], O: [84, 120] },
+    B: { M: [80, 8], E: [80, 24], S: [80, 41], H: [80, 73], G: [81, 96], C: [78, 117], O: [84, 121] },
+  },
+  'pince-disques': {
+    vue: 'profil',
+    A: DEBOUT,
+    B: { ...DEBOUT, S: [80, 29], E: [81, 46], M: [82, 61] },
+  },
+  pronation: {
+    vue: 'profil', cadre: [50, 12, 90, 74],
+    A: { ...DEBOUT, E: [81, 47], M: [96, 47], D: [99, 39.5] },
+    B: { ...DEBOUT, E: [81, 47], M: [96, 47], D: [99, 54.5] },
   },
 
   // ─── Jambes ───
@@ -549,6 +586,18 @@ export const GESTES: Record<string, Geste> = {
   'developpe-serre': g('developpe-couche', 'barre'),
   kickback: g('kickback', 'halteres'),
   'extension-haltere-tete': g('extension-tete', 'halteres'),
+  // Avant-bras
+  'curl-poignets-poulie': g('poignets-banc', 'poulie'),
+  'extension-poignets-poulie': g('poignets-banc', 'poulie'),
+  'curl-inverse-poulie': g('curl', 'machine'),
+  'curl-poignets': g('poignets-banc', 'halteres'),
+  'extension-poignets-halteres': g('poignets-banc', 'halteres'),
+  'curl-inverse-ez': g('curl', 'barre'),
+  'rouleau-poignets': g('rouleau-poignets', 'rouleau-poignets'),
+  'marche-fermier': g('marche-fermier', 'halteres'),
+  'suspension-barre': g('suspension'),
+  'pince-disques': g('pince-disques', 'barre'),
+  'pronation-supination': g('pronation', 'manche'),
   // Quadriceps
   'presse-cuisses': g('presse-cuisses', 'plateau'),
   'presse-horizontale': g('presse-cuisses', 'plateau'),

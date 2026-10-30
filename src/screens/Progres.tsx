@@ -1,5 +1,5 @@
 import { useMemo, useState, type CSSProperties } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Courbe } from '../components/Courbe';
 import { Entete } from '../components/Entete';
 import { CHAMPS_MESURE, FeuilleMesure } from '../components/FeuilleMesure';
@@ -19,6 +19,7 @@ export function Progres() {
   const entrainements = useEntrainementsTermines();
   const mesures = useMesures();
   const afficherMessage = useMessage();
+  const naviguer = useNavigate();
   const [feuilleMesure, setFeuilleMesure] = useState(false);
   const [tousRecords, setTousRecords] = useState(false);
 
@@ -54,6 +55,7 @@ export function Progres() {
           <SilhouetteMuscles
             carte={carteSemaine(parMuscle)}
             echelle="volume"
+            onMuscle={(m) => naviguer(`/exercices?muscle=${m}`)}
             titre={muscles.length ? `Séries de la semaine : ${muscles.map((m) => `${m.libelle} ${formatNombre(m.n)}`).join(', ')}` : 'Aucune série cette semaine'}
           />
           <div className="silhouette-vues" aria-hidden="true">
@@ -67,11 +69,13 @@ export function Progres() {
               </span>
             ))}
           </div>
+          <p className="legende-action">Touche un muscle pour voir ses exercices.</p>
         </div>
         {muscles.length > 0 ? (
           <ul className="carte barres-muscles">
             {muscles.map((m) => (
               <li key={m.id}>
+                <Link to={`/exercices?muscle=${m.id}`} className="barre-muscle">
                 <span className="barre-nom">{m.libelle}</span>
                 <span className="barre-piste">
                   <span
@@ -80,6 +84,7 @@ export function Progres() {
                   />
                 </span>
                 <span className="barre-nombre chiffres">{formatNombre(m.n)}</span>
+                </Link>
               </li>
             ))}
           </ul>

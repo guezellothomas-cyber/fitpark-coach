@@ -16,17 +16,34 @@
 .barres-muscles {
   list-style: none;
   margin: 10px 0 0;
-  padding: 10px 16px;
+  padding: 4px 16px;
   display: grid;
-  gap: 8px;
 }
 
-.barres-muscles li {
+.barre-muscle {
   display: grid;
   grid-template-columns: 96px 1fr 34px;
   align-items: center;
   gap: 10px;
+  min-height: var(--min-tactile);
   font-size: 15px;
+  color: inherit;
+  text-decoration: none;
+}
+
+.zone-muscle {
+  cursor: pointer;
+  outline: none;
+}
+
+.zone-muscle:active {
+  fill: rgba(255, 255, 255, 0.18);
+}
+
+.legende-action {
+  margin: 0;
+  font-size: 14px;
+  color: var(--texte-2);
 }
 
 .barre-piste {

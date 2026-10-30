@@ -40,7 +40,11 @@ export const ZONES = {
     'longue-portion': 'Longue portion (bras au-dessus de la tête)',
     'autres-chefs': 'Chefs latéral et médial (bras le long du corps)',
   },
-  'avant-bras': { global: 'Avant-bras' },
+  'avant-bras': {
+    flechisseurs: 'Fléchisseurs (paume vers le haut)',
+    extenseurs: 'Extenseurs (dos de la main)',
+    'brachio-radial': 'Brachio-radial (dessus de l’avant-bras)',
+  },
   quadriceps: { vastes: 'Vastes (squats, presses)', 'droit-femoral': 'Droit fémoral (extension)' },
   ischios: { hanche: 'Ischios côté hanche (charnière)', genou: 'Ischios côté genou (flexion)' },
   fessiers: { 'grand-fessier': 'Grand fessier', 'moyen-fessier': 'Moyen fessier (côté)' },

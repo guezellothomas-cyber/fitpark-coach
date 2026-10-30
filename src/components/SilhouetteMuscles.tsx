@@ -3,7 +3,8 @@
  * Chaque vue est dessinée pour la moitié gauche du corps puis recopiée en miroir.
  * Repère : 100 de large × 200 de haut par vue, axe du corps à x = 50.
  */
-import { REGIONS_DOS, REGIONS_FACE, type CarteRegions, type Region } from '../data/regions';
+import { libelleMuscle, type MuscleId } from '../data/muscles';
+import { REGIONS_DOS, REGIONS_FACE, muscleDeRegion, type CarteRegions, type Region } from '../data/regions';
 
 /** Formes des muscles (moitié gauche). */
 const FORMES: Record<Region, string> = {
@@ -19,6 +20,8 @@ const FORMES: Record<Region, string> = {
   quadriceps: 'M36.5,86 C33.5,98 33.5,116 37,136 L44,136 C44,122 45,108 46,98.5 C43,94 39.5,90 36.5,86 Z',
   adducteurs: 'M46.6,99.5 L49.2,100.5 L48.2,114 C47.4,121 46.4,127.5 45,134 C45,122 45.6,110 46.6,99.5 Z',
   'mollets-face': 'M36.2,145 C34.4,157 35.2,170 38,182 L43,182 C44,170 44.8,157 44,145 Z',
+  // Brachio-radial : bande sur le dessus de l'avant-bras, près du coude
+  'brachio-radial': 'M24,73 C23,77 22.4,81 22,86 L24.8,86 C25.6,81 26.6,77 27.6,73 Z',
   // ----- Dos -----
   trap: 'M50,21 L44.5,29.5 L36,33 L43,36.5 L50,53 Z',
   'delt-arriere': 'M35,32 C29,32 25,36 24,44 C24,48 25,51 26,53 C28,48 31,44 36,41 C37.5,38 37.5,34 35,32 Z',
@@ -72,7 +75,20 @@ function couleur(intensite: CarteRegions[Region], echelle: Echelle): string {
   return intensite === 'leger' ? 'var(--rouge-clair)' : 'var(--rouge-vif)';
 }
 
-function Vue({ vue, carte, decalage, echelle }: { vue: 'face' | 'dos'; carte: CarteRegions; decalage: number; echelle: Echelle }) {
+/** Petits muscles : leur zone tactile passe devant celle des grands. */
+const PETITS: ReadonlySet<Region> = new Set([
+  'biceps', 'triceps', 'avant-bras-face', 'avant-bras-dos', 'brachio-radial', 'trap-face', 'trap', 'adducteurs',
+]);
+
+interface PropsVue {
+  vue: 'face' | 'dos';
+  carte: CarteRegions;
+  decalage: number;
+  echelle: Echelle;
+  onMuscle?: ((m: MuscleId) => void) | undefined;
+}
+
+function Vue({ vue, carte, decalage, echelle, onMuscle }: PropsVue) {
   const { regions, base } = VUES[vue];
   const moitie = (
     <>
@@ -85,6 +101,26 @@ function Vue({ vue, carte, decalage, echelle }: { vue: 'face' | 'dos'; carte: Ca
       ))}
     </>
   );
+  // Zones tactiles invisibles, plus larges que les muscles : un bras fait à peine 7 px à l'écran.
+  const zones = onMuscle && (
+    <>
+      {[...regions]
+        .sort((a, b) => Number(PETITS.has(a)) - Number(PETITS.has(b)))
+        .map((r) => (
+          <path
+            key={r}
+            d={FORMES[r]}
+            className="zone-muscle"
+            fill="transparent"
+            stroke="transparent"
+            strokeWidth={5}
+            role="button"
+            aria-label={`Voir les exercices : ${libelleMuscle(muscleDeRegion(r))}`}
+            onClick={() => onMuscle(muscleDeRegion(r))}
+          />
+        ))}
+    </>
+  );
   return (
     <g transform={`translate(${decalage} 0)`} stroke="var(--contour)" strokeWidth={0.9} strokeLinejoin="round">
       <ellipse cx={50} cy={14} rx={8.5} ry={10.5} fill="var(--corps)" />
@@ -94,6 +130,8 @@ function Vue({ vue, carte, decalage, echelle }: { vue: 'face' | 'dos'; carte: Ca
         // Lignes des abdominaux, pour la lisibilité
         <path d="M44,63 H56 M44,70 H56 M44,77 H56 M50,56.5 V84.5" strokeWidth={0.7} fill="none" />
       )}
+      {zones}
+      {zones && <g transform="translate(100 0) scale(-1 1)">{zones}</g>}
     </g>
   );
 }
@@ -107,24 +145,26 @@ interface Props {
   className?: string;
   titre?: string;
   echelle?: Echelle;
+  /** Rend les muscles touchables. */
+  onMuscle?: (muscle: MuscleId) => void;
 }
 
 const CADRAGES = { entier: '14 0 72 200', haut: '16 2 68 104', bas: '22 80 56 116' } as const;
 
 /** Silhouette coloriée. Rouge vif = muscle principal, rouge clair = muscles secondaires. */
-export function SilhouetteMuscles({ carte, vues = 'les-deux', cadrage = 'entier', className, titre, echelle = 'exercice' }: Props) {
+export function SilhouetteMuscles({ carte, vues = 'les-deux', cadrage = 'entier', className, titre, echelle = 'exercice', onMuscle }: Props) {
   const deux = vues === 'les-deux';
   return (
     <svg
       viewBox={deux ? '0 0 210 200' : CADRAGES[cadrage]}
       className={`silhouette ${className ?? ''}`}
-      role="img"
+      role={onMuscle ? 'group' : 'img'}
       aria-label={titre ?? 'Muscles travaillés'}
     >
       {deux ? (
         <>
-          <Vue vue="face" carte={carte} decalage={0} echelle={echelle} />
-          <Vue vue="dos" carte={carte} decalage={110} echelle={echelle} />
+          <Vue vue="face" carte={carte} decalage={0} echelle={echelle} onMuscle={onMuscle} />
+          <Vue vue="dos" carte={carte} decalage={110} echelle={echelle} onMuscle={onMuscle} />
         </>
       ) : (
         <Vue vue={vues} carte={carte} decalage={0} echelle={echelle} />

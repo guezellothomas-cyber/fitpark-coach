@@ -5,6 +5,7 @@
  *   2. Zone : une partie du muscle pas encore travaillée.
  *   3. Position de charge : étirement après contraction, et l'inverse.
  *   4. Outil : après du libre, poulie ou machine (et après machine/poulie, du libre).
+ * Muscles opposés : les fléchisseurs de l'avant-bras appellent les extenseurs, et l'inverse.
  * Filtres : jamais un exercice absent de ma salle, jamais un quasi-doublon
  * (même muscle, même zone, même matériel, même mouvement) d'un exercice déjà choisi.
  *
@@ -35,6 +36,11 @@ const MUSCLES_ASSOCIES: Partial<Record<MuscleId, MuscleId[]>> = {
   ischios: ['quadriceps'],
 };
 
+/** Zones qui se répondent dans un même muscle : l'une appelle l'autre en priorité. */
+const ZONES_OPPOSEES: Partial<Record<MuscleId, Record<string, string>>> = {
+  'avant-bras': { flechisseurs: 'extenseurs', extenseurs: 'flechisseurs' },
+};
+
 const LIBRE: ReadonlySet<TypeExercice> = new Set(['libre', 'poids-du-corps']);
 
 /** Deux exercices quasi identiques : même muscle, même zone, même matériel, même mouvement. */
@@ -53,6 +59,8 @@ const cleZone = (e: ExerciceCatalogue) => `${e.musclePrincipal}/${e.zone}`;
 /** Ce que chaque candidat apporte par rapport à l'exercice de départ. */
 function analyser(c: ExerciceCatalogue, depart: ExerciceCatalogue, zonesFaites: Set<string>) {
   return {
+    zoneOpposee:
+      c.musclePrincipal === depart.musclePrincipal && ZONES_OPPOSEES[depart.musclePrincipal]?.[depart.zone] === c.zone,
     zoneNouvelle: !zonesFaites.has(cleZone(c)),
     memeMuscle: c.musclePrincipal === depart.musclePrincipal,
     articulationInverse: c.mouvement.articulation !== depart.mouvement.articulation,
@@ -66,7 +74,7 @@ type Analyse = ReturnType<typeof analyser>;
 
 /** Ordre de priorité des critères pour chaque rôle de suggestion. */
 const PRIORITES: Record<'zone' | 'complement', (a: Analyse) => boolean[]> = {
-  zone: (a) => [a.zoneNouvelle, a.memeMuscle, !a.articulationInverse, a.chargeInverse, a.reference, a.memeMateriel],
+  zone: (a) => [a.zoneOpposee && a.zoneNouvelle, a.zoneNouvelle, a.memeMuscle, !a.articulationInverse, a.chargeInverse, a.reference, a.memeMateriel],
   complement: (a) => [a.articulationInverse, a.zoneNouvelle, a.memeMuscle, a.reference, a.chargeInverse, a.outilVarie],
 };
 
@@ -78,6 +86,7 @@ function comparer(a: boolean[], b: boolean[]): number {
 
 function expliquer(c: ExerciceCatalogue, depart: ExerciceCatalogue, a: Analyse): string {
   const raisons: string[] = [];
+  if (a.zoneOpposee) raisons.push('muscles opposés, pour équilibrer');
   if (a.zoneNouvelle) raisons.push(`${libelleZone(c.musclePrincipal, c.zone)} pas encore travaillé`);
   if (a.articulationInverse) {
     raisons.push(

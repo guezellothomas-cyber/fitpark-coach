@@ -42,6 +42,25 @@ describe('guide : exemples du cahier des charges', () => {
   });
 });
 
+describe('guide : avant-bras', () => {
+  it('Curl poignets barre → extension poignets haltères + curl inversé barre EZ', () => {
+    expect(noms('curl-poignets')).toEqual(['Extension poignets haltères', 'Curl inversé barre EZ']);
+  });
+
+  it('les extenseurs appellent les fléchisseurs', () => {
+    expect(suggerer(ex('extension-poignets-halteres'), EXERCICES)[0]!.exercice.zone).toBe('flechisseurs');
+  });
+
+  it('les fléchisseurs à la poulie appellent aussi les extenseurs', () => {
+    expect(suggerer(ex('curl-poignets-poulie'), EXERCICES)[0]!.exercice.zone).toBe('extenseurs');
+  });
+
+  it('une fois les extenseurs dans la séance, propose une autre zone', () => {
+    const zones = suggerer(ex('curl-poignets'), EXERCICES, [ex('extension-poignets-halteres')]).map((s) => s.exercice.zone);
+    expect(zones[0]).toBe('brachio-radial');
+  });
+});
+
 describe('guide : filtres', () => {
   it('ne propose jamais un exercice absent de ma salle', () => {
     const catalogue = EXERCICES.map((e) => ({
