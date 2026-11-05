@@ -325,3 +325,17 @@
 .app:has(.bandeau-maj) .cache-haut {
   display: none;
 }
+
+/* Retour vers Cap quand le carnet est intégré à Cap */
+.retour-cap {
+  display: inline-flex;
+  align-items: center;
+  margin-bottom: 8px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: var(--surface-2, rgba(127, 127, 127, 0.15));
+  color: inherit;
+  font-weight: 600;
+  font-size: 14px;
+  text-decoration: none;
+}
